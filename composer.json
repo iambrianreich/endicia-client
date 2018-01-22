@@ -1,0 +1,24 @@
+{
+    "name": "reichwebconsulting/endicia-client",
+    "description": "PHP 7.1+ client for Endicia Label Server API",
+    "autoload" : {
+        "psr-4" : {
+            "RWC\\Endicia\\" : "src"
+        }
+    },
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brian Reich",
+            "email": "breich@reich-consulting.net",
+            "homepage" : "https://www.reich-consulting.net/"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "6.5"
+    }
+}
