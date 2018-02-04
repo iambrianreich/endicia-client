@@ -38,6 +38,11 @@ abstract class ApiTestCase extends TestCase
     const SKIP_CHANGE_PASSPHRASE_VARIABLE = 'ENDICIA_SKIP_CHANGE_PASSPHRASE';
 
     /**
+     * The environment variable for skipping test of recredit.
+     */
+    const SKIP_RECREDIT_VARIABLE = 'ENDICIA_SKIP_RECREDIT';
+
+    /**
      * Only run API tests if Endicia configuration is available.
      */
     protected function setUp()
@@ -123,6 +128,16 @@ abstract class ApiTestCase extends TestCase
     protected function isSkipChangePassPhrase() : bool
     {
         return getenv(self::SKIP_CHANGE_PASSPHRASE_VARIABLE) !== false;
+    }
+
+    /**
+     * Returns true if the testing recredit (buy postage) should be skipped.
+     *
+     * @return boolean Returns true if test should skip recredit.
+     */
+    protected function isSkipRecredit() : bool
+    {
+        return getenv(self::SKIP_RECREDIT_VARIABLE) !== false;
     }
 
     /**

@@ -102,7 +102,7 @@ class Client
      */
     public function changePassPhrase(ChangePassPhraseRequest $request)
     {
-        $this->applySandboxOptions();
+        $this->applySandboxOptions($request);
 
         $response = $this->getClient()->post(
             $this->getBaseUrl() . '/ChangePassPhraseXML?op=ChangePassPhraseXML',
@@ -120,6 +120,33 @@ class Client
         return ChangePassPhraseRequestResponse::fromXml((string) $response->getBody());
     }
     
+    /**
+     * Adds funds to a postage account.
+     *
+     * @param  ChangePassPhraseRequest $request The request object.
+     *
+     * @return ChangePassPhraseRequestResponse Returns the API response.
+     */
+    public function recredit(RecreditRequest $request)
+    {
+        $this->applySandboxOptions($request);
+
+        $response = $this->getClient()->post(
+            $this->getBaseUrl() . '/BuyPostageXML',
+            [
+                'form_params' => [
+                    'recreditRequestXML'=> $request->toXml()
+                ]
+            ]
+        );
+
+        if ($response->getReasonPhrase() != 'OK') {
+            // TODO WTF?
+        }
+
+        return RecreditRequestResponse::fromXml((string) $response->getBody());
+    }
+
     /**
      * Sets the Guzzle Client.
      *

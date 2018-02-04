@@ -7,6 +7,7 @@ use RWC\Endicia\Client;
 use RWC\Endicia\InvalidArgumentException;
 use RWC\Endicia\CertifiedIntermediary;
 use RWC\Endicia\ChangePassPhraseRequest;
+use RWC\Endicia\RecreditRequest;
 
 class ClientTest extends ApiTestCase
 {
@@ -23,8 +24,8 @@ class ClientTest extends ApiTestCase
             $this->markTestSkipped(
                 'Skipping ChangePassPhrase test so account credentials remain unchanged.'
             );
+            return;
         }
-        return;
 
         $oldPassPhrase = $this->getPassPhrase();
         $client        = new Client(Client::MODE_SANDBOX);
@@ -75,5 +76,30 @@ class ClientTest extends ApiTestCase
         $mode = Client::MODE_SANDBOX;
         $this->client->setMode($mode);
         $this->assertEquals(Client::SANDBOX_URL, $this->client->getBaseUrl());
+    }
+
+    public function testRecredit()
+    {
+        if ($this->isSkipRecredit()) {
+            $this->markTestSkipped(
+                'Skipping recredit test so funds are not added to account.'
+            );
+            return;
+        }
+
+        $oldPassPhrase = $this->getPassPhrase();
+        $client        = new Client(Client::MODE_SANDBOX);
+        $requesterId   = $client->getSandboxRequesterId();
+        $ci            = $this->getCertifiedIntermediary();
+        $recreditAmount = 500.00;
+
+        $request       = new RecreditRequest(
+            $requesterId,
+            $ci,
+            $recreditAmount
+        );
+        
+        $response = $client->recredit($request);
+        $this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
     }
 }

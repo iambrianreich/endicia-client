@@ -80,12 +80,12 @@ class RecreditRequest extends AbstractRequest
      */
     public function setRecreditAmount(float $recreditAmount) : void
     {
-        if ($recreditAmount <= 10.00) {
+        if ($recreditAmount < 10.00) {
             throw new InvalidArgumentException("The minimum amount of credit " .
                 "that can be purchased is 10.00.");
         }
 
-        if ($recreditAmount >= 99999.99) {
+        if ($recreditAmount > 99999.99) {
             throw new InvalidArgumentException("The maximum amount of credit " .
             "that can be purchased is 99,999.99");
         }
@@ -100,7 +100,7 @@ class RecreditRequest extends AbstractRequest
      */
     public function getRecreditAmount() : float
     {
-        return $this>recreditAmount;
+        return $this->recreditAmount;
     }
 
     /**
