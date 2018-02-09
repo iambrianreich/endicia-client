@@ -68,7 +68,7 @@ class ChangePassphraseRequest extends AbstractRequest
 
         if (strlen($newPassPhrase) > 64) {
             throw new InvalidArgumentException(
-                'New pass phrase cannot be longer than 64 character.'
+                'New pass phrase cannot be longer than 64 characters.'
             );
         }
 

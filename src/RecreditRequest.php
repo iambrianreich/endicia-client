@@ -16,7 +16,7 @@ use RWC\Endicia\InvalidArgumentException;
 /**
  * A RecreditRequest adds funds to a postage account.
  *
- * The RecreditRequest requires the basic request parametes required by all
+ * The RecreditRequest requires the basic request parameters required by all
  * Endicia requests: a requester id and a CertifiedIntermediary (authentication
  * credentials) which will actually be charged for the activity.
  *

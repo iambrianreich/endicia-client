@@ -185,7 +185,7 @@ class Client
      * with the production or sandbox versions of the Endicia API. The value
      * must either "production" or "sandbox".
      *
-     * @param string $mode THe run mode for the Client.
+     * @param string $mode The run mode for the Client.
      */
     public function setMode(string $mode = 'production') : void
     {
@@ -198,7 +198,7 @@ class Client
 
     /**
      * Returns the client mode (production or sandbox).
-
+	 *
      * @return string Returns the client's mode.
      */
     public function getMode() : string
@@ -209,7 +209,7 @@ class Client
     /**
      * Returns true if sandbox mode is enabled.
      *
-     * @return boolean Returns true if Sadbox mode is enabled.
+     * @return boolean Returns true if Sandbox mode is enabled.
      */
     public function isSandbox() : bool
     {

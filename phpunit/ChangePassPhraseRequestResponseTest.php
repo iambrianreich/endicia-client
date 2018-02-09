@@ -1,6 +1,6 @@
 <?php
 
- namespace Tests\RWC\Endicia;
+namespace Tests\RWC\Endicia;
 
 use PHPUnit\Framework\TestCase;
 use RWC\Endicia\AbstractResponse;
