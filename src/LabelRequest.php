@@ -13,6 +13,7 @@ namespace RWC\Endicia;
 use RWC\Endicia\AbstractRequest;
 use RWC\Endicia\Address;
 use RWC\Endicia\InvalidArgumentException;
+use RWC\Endicia\MailClass;
 
 /**
  *	A LabelRequest fetches a printable postage label.
@@ -27,52 +28,12 @@ use RWC\Endicia\InvalidArgumentException;
  *		pickup/origin postal code, the From/Return Address and the To/Destination
  *		Address
  *
- * @author     Brian Reich <tom@tomegan.tech>
+ * @author     Tom Egan <tom@tomegan.tech>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
 class LabelRequest extends AbstractRequest
 {
-	/**
-	 *	Used to select the "Priority Mail Express" mail class.
-	 */
-	const MAIL_CLASS_PRIORITYEXPRESS = 'PriorityExpress';
-
-	/**
-	 *	Used to select the "First-Class Package Service" and
-	 *	"First-Class Mail Parcel" mail classes.
-	 */
-	const MAIL_CLASS_FIRST = 'First';
-
-	/**
-	 *	Used to select the "Library Mail" mail class.
-	 */
-	const MAIL_CLASS_LIBRARYMAIL = 'LibraryMail';
-
-	/**
-	 *	Used to select the "Media Mail" mail class.
-	 */
-	const MAIL_CLASS_MEDIAMAIL = 'MediaMail';
-
-	/**
-	 *	Used to select the "Priority Mail" mail class.
-	 */
-	const MAIL_CLASS_PRIORITY = 'Priority';
-	
-	/**
-	 *	Used to selecte the "Parcel Select" mail class. Available to most but
-	 *	not all users. Note that SortType and EntryFacility must be set for
-	 *	LabelRequests using this mail class to be valid
-	 */
-	const MAIL_CLASS_PARCELSELECT = 'ParcelSelect';
-	
-	/**
-	 *	Used to select the "Retail Ground" mail class. Note: Retail Ground
-	 *	is available only for use by USPS Authorized Shippers.
-	 */
-	const MAIL_CLASS_RETAILGROUND = 'RetailGround';
-
-	private const ALLOWED_MAIL_CLASSES = array(self::MAIL_CLASS_PRIORITYEXPRESS, self::MAIL_CLASS_FIRST, self::MAIL_CLASS_LIBRARYMAIL, self::MAIL_CLASS_MEDIAMAIL, self::MAIL_CLASS_PRIORITY, self::MAIL_CLASS_PARCELSELECT, self::MAIL_CLASS_RETAILGROUND);
 
 	/**
 	 *	The mail class for the mailpiece the requested label will be affixed to
@@ -145,10 +106,10 @@ class LabelRequest extends AbstractRequest
 	 */
 	public function setMailClass(string $mailClass) : void
 	{
-		if(!in_array($mailClass, self::ALLOWED_MAIL_CLASSES))
+		if(!MailClass::is_valid($mailClass))
 		{
 			throw new InvalidArgumentException(
-				'Mail Class must be one of: ' . join(', ', self::ALLOWED_MAIL_CLASSES)
+				'Mail Class must be one of the constants from : RWC\Endicia\MailClass'
 			);
 		}
 		

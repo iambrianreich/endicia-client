@@ -7,6 +7,7 @@ use RWC\Endicia\Address;
 use RWC\Endicia\CertifiedIntermediary;
 use RWC\Endicia\InvalidArgumentException;
 use RWC\Endicia\LabelRequest;
+use RWC\Endicia\MailClass;
 
 class LabelRequestTest extends TestCase
 {
@@ -34,7 +35,7 @@ class LabelRequestTest extends TestCase
 		
 		$this->assertInstanceOf(
 			LabelRequest::class,
-			new LabelRequest($this->requesterId, $ci, LabelRequest::MAIL_CLASS_FIRST, 0.2, $from, $to)
+			new LabelRequest($this->requesterId, $ci, MailClass::FIRST, 0.2, $from, $to)
 		);
 	}
 }
