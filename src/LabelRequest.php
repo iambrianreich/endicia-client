@@ -37,9 +37,8 @@ class LabelRequest extends AbstractRequest
 
 	/**
 	 *	The mail class for the mailpiece the requested label will be affixed to
-	 *	Must be one of the MAIL_CLASS_* constants
 	 *
-	 *	@var String
+	 *	@var string (Must be one of the constants from RWC\Endicia\MailClass)
 	 */
 	private $mailClass;
 
@@ -63,20 +62,45 @@ class LabelRequest extends AbstractRequest
 	 * @var Address
 	 */
 	private $destinationAddress;
+
+	/**
+	 *	Flag signaling that a Certified Mail Label is requested
+	 *
+	 *	@var bool
+	 */
+	private $useCertifiedMail;
 	
-//	private $labelSize;
+	/**
+	 *	Flag signaling that a Destination Confirm Mail Label is requested
+	 *
+	 *	@var bool
+	 */
+	private $useDesinationConfirmMail;
+
+	/**
+	 *	The size label to be requested
+	 *
+	 *	@var string (Must be one of the constants from RWC\Endicia\LabelSize)
+	 */
+	private $labelSize;
+
 //	private $imageFormat;
 //	private $shape;
 //	private $originPostalCode;
 
 	/**
-	 * Creates a new LabelRequest.
+	 *	Creates a new LabelRequest.
 	 *
 	 *	The request must specify the requester id which identifies the
 	 *	application making the request. The CertifiedIntermediary is the
 	 *	authentication token that provides either the account id and password, or
-	 *	the security token for the account. The label size is one of the
-	 *	enumerated values for supported label size
+	 *	the security token for the account. The mail class specifies the handling
+	 *	priority for the mailpiece the label will be affixed to, the weight
+	 *	specifies the weight of the mailpiece the label will be affixed to in
+	 *	ounces to the nearest 1/10th ounce, the return address specifies the
+	 *	return address to be shown on the label, typically but not necessarily
+	 *	the origin address for the mailpiece and the destination address
+	 *	specifies the "to" address to be shown on the label.
 	 *
 	 *	If these validation requirements are not met, an InvalidArgumentException
 	 *	is thrown.
@@ -95,6 +119,12 @@ class LabelRequest extends AbstractRequest
 		Address $destinationAddress
 	) {
 		parent::__construct($requesterId, $certifiedIntermediary);
+		// poking a few ivar directly so that validation starts in a valid state
+		$this->useCertifiedMail = false;
+		$this->useDesinationConfirmMail = false;
+		$this->labelSize = NULL;
+
+		// set ivars using accessors for specified params
 		$this->setMailClass($mailClass);
 		$this->setWeight($weight);
 		$this->setReturnAddress($returnAddress);
@@ -102,7 +132,10 @@ class LabelRequest extends AbstractRequest
 	}
 
 	/**
+	 *	Sets the Mail Class to be specified on the label for a mailpiece
 	 *
+	 *	@param mailClass must be a string which corresponds to one of the
+	 *		public constants exposed by RWC\Endicia\MailClass
 	 */
 	public function setMailClass(string $mailClass) : void
 	{
@@ -117,7 +150,10 @@ class LabelRequest extends AbstractRequest
 	}
 	
 	/**
+	 *	Gets the Mail Class
 	 *
+	 *	@return a string which corresponds to one of the public constants
+	 *		exposed by RWC\Endicia\MailClass
 	 */
 	public function getMailClass() : string
 	{
@@ -125,7 +161,90 @@ class LabelRequest extends AbstractRequest
 	}
 	
 	/**
+	 *	Set whether a Certified Mail Label is requested
 	 *
+	 *	@param bool $use - pass in true to request a Certified Mail label
+	 *		or false to request a label based on Mail Class, the default
+	 *
+	 *	@throws InvalidArgumentException if a Destination Confirm Mail Label
+	 *		has been requested or if the requested label size has been set to
+	 *		a size not supported by Certified Mail
+	 */
+	public function setUseCertifiedMail(bool $use) : void
+	{
+		if($this->useDesinationConfirmMail && $use)
+		{
+			throw new InvalidArgumentException(
+				'Mail can not be both Certified Mail and Destination Confirm Mail'
+			);
+		}
+		
+		if($this->$labelSize && !LabelSize::is_valid_certified_mail_label_size($this->$labelSize))
+		{
+			throw new InvalidArgumentException(
+				'Requested label size not available for use with Certified Mail'
+			);
+		}
+		
+		$this->useCertifiedMail = $use;
+	}
+	
+	/**
+	 *	Get whether a Certified Mail Label is requested
+	 *
+	 *	@return true if a Certified Mail Label has been requested and false
+	 *		otherwise
+	 */
+	public function getUseCertifiedMailMail() : bool
+	{
+		return $this->useCertifiedMail;
+	}
+	
+	/**
+	 *	Set whether a Destination Confirm Mail Label is requested
+	 *
+	 *	@param bool $use - pass in true to request Destination Confirm mail
+	 *		or false to request a label based on Mail Class, the default
+	 *
+	 *	@throws InvalidArgumentException if a certified Mail Label has been
+	 *		requested or if the requested label size has been set to a size
+	 *		not supported by Destination confirm mail
+	 */
+	public function setUseDesinationConfirmMail(bool $use) : void
+	{
+		if($this->useCertifiedMail && $use)
+		{
+			throw new InvalidArgumentException(
+				'Mail can not be both Certified Mail and Destination Confirm Mail'
+			);
+		}
+		
+		if($this->$labelSize && !LabelSize::is_valid_destination_confirm_label_size($this->$labelSize))
+		{
+			throw new InvalidArgumentException(
+				'Requested label size not available for use with Destination Confirm Mail'
+			);
+		}
+		
+		$this->useDesinationConfirmMail = $use;
+	}
+	
+	/**
+	 *	Get whether a Destination Confirm Label is requested
+	 *
+	 *	@return true if a Destination Confirm Label has been requested
+	 *		and false otherwise
+	 */
+	public function getUseDestinationConfirmMail() : bool
+	{
+		return $this->useDesinationConfirmMail;
+	}
+	
+	/**
+	 *	Sets the weight to be specified on the label for a mailpiece
+	 *
+	 *	@param weight a floating point number w; 0.0 < w < 1120.0 with a precision
+	 *		of 1/10th ounce
 	 */
 	public function setWeight(float $weight) : void
 	{
@@ -147,7 +266,10 @@ class LabelRequest extends AbstractRequest
 	}
 	
 	/**
+	 *	Gets the weight to be specified on the label for a mailpiece
 	 *
+	 *	@return a floating point number w; 0.0 < w < 1120.0 with a precision
+	 *		of 1/10th ounce
 	 */
 	public function getWeight() : float
 	{
@@ -155,7 +277,9 @@ class LabelRequest extends AbstractRequest
 	}
 	
 	/**
+	 *	Sets the return (From) Address
 	 *
+	 *	@param address must be an instance of RWC\Endicia\Address
 	 */
 	public function setReturnAddress(Address $address) : void
 	{
@@ -170,7 +294,10 @@ class LabelRequest extends AbstractRequest
 	}
 
 	/**
+	 *	Gets the return (From) Address
 	 *
+	 *	@return an instance of RWC\Endicia\Address which encapsulates the
+	 *		return (From) address for a mailpiece
 	 */
 	public function getReturnAddress() : Address
 	{
@@ -178,7 +305,9 @@ class LabelRequest extends AbstractRequest
 	}
 	
 	/**
+	 *	Sets the destination (To) Address
 	 *
+	 *	@param address must be an instance of RWC\Endicia\Address
 	 */
 	public function setDestinationAddress(Address $address) : void
 	{
@@ -193,11 +322,55 @@ class LabelRequest extends AbstractRequest
 	}
 
 	/**
+	 *	Gets the destination (To) Address
 	 *
+	 *	@return an instance of RWC\Endicia\Address which encapsulates the
+	 *		destination (To) address for a mailpiece
 	 */
 	public function getDestinationAddress() : Address
 	{
 		return $this->destinationAddress;
+	}
+
+	/**
+	 *	Sets the Mail Class to be specified on the label for a mailpiece
+	 *
+	 *	@param mailClass must be a string which corresponds to one of the
+	 *		public constants exposed by RWC\Endicia\MailClass
+	 */
+	public function setLabelSize(string $size) : void
+	{
+		if($this->useCertifiedMail && !LabelSize::is_valid_certified_mail_label_size($size))
+		{
+			throw new InvalidArgumentException(
+				'Label size must be one of the constants from : RWC\Endicia\LabelSize useable with Certified Mail'
+			);
+		}
+		else if($this->useDesinationConfirmMail && !LabelSize::is_valid_destination_confirm_label_size($size))
+		{
+			throw new InvalidArgumentException(
+				'Label size must be one of the constants from : RWC\Endicia\LabelSize usable with Desination Confirm Mail'
+			);
+		}
+		else if(!LabelSize::is_valid($size))
+		{
+			throw new InvalidArgumentException(
+				'Label size must be one of the constants from : RWC\Endicia\LabelSize'
+			);
+		}
+		
+		$this->labelSize = $size;
+	}
+	
+	/**
+	 *	Gets the Label Size
+	 *
+	 *	@return a string which corresponds to one of the public constants
+	 *		exposed by RWC\Endicia\LabelSize
+	 */
+	public function getLabelSize() : string
+	{
+		return $this->labelSize;
 	}
 
 	/**
@@ -217,7 +390,17 @@ class LabelRequest extends AbstractRequest
 		
 		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 //		$xml .= '<LabelRequest Test="string" LabelType="string" LabelSize="string" ImageFormat="string">';
-		$xml .= '<LabelRequest>';
+		$xml .= '<LabelRequest';
+		if($this->getUseCertifiedMailMail()) {
+			$xml .= ' LabelType="CertifiedMail"';
+		}
+		if($this->getUseDestinationConfirmMail()) {
+			$xml .= ' LabelType="DestinationConfirm"';
+		}
+		if($this->getLabelSize()) {
+			$xml .= ' LabelSize="' . $this->getLabelSize() . '"';
+		}
+		$xml .= '>';
 		$xml .= '<RequesterID>' . htmlentities($this->getRequesterId()) . '</RequesterID>';
 		if(!empty($ci->getToken())) {	// Use Token
 			$xml .= '<Token>' . htmlspecialchars($ci->getToken()) . '</Token>';

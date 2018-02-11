@@ -57,9 +57,22 @@ final class MailClass
 	 *	is available only for use by USPS Authorized Shippers.
 	 */
 	const RETAILGROUND = 'RetailGround';
-	
+
+	/**
+	 *	An array of the public constants allows us to quickly check if a string
+	 *	corresponds to a constant without reflection gymnastics
+	 */
 	private const ALLOWED_MAIL_CLASSES = array(self::PRIORITYEXPRESS, self::FIRST, self::LIBRARYMAIL, self::MEDIAMAIL, self::PRIORITY, self::PARCELSELECT, self::RETAILGROUND);
 	
+	/**
+	 *	A check to determine if a given string corresponds to one of the public
+	 *	constants
+	 *
+	 *	@param mailClass - the string to test
+	 *
+	 *	@return a boolean true if and only if the string corresponds to one of
+	 *		public constants
+	 */
 	public static function is_valid(string $mailClass) : bool
 	{
 		return in_array($mailClass, self::ALLOWED_MAIL_CLASSES);
