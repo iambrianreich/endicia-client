@@ -102,4 +102,17 @@ class ClientTest extends ApiTestCase
         $response = $client->recredit($request);
         $this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
     }
+	
+	public function testGetBasicLabel()
+	{
+		$client = new Client(Client::MODE_SANDBOX);
+        $requesterId = $client->getSandboxRequesterId();
+        $ci = $this->getCertifiedIntermediary();
+		$to = new Address('Jane Doe', NULL, '1 Hacker Way', NULL, NULL, NULL, 'Palo Alto', 'CA', '94025', NULL, 'US', NULL, NULL);
+		$from = new Address('Jane Doe', 'Endicia, Inc.', '278 Castro Street', NULL, NULL, NULL, 'Mountain View', 'CA', '94041', NULL, 'US', NULL, NULL);
+		
+		$request = new LabelRequest($requesterId, $ci, MailClass::PRIORITY, 16.0, $from, $to);
+		$response = $client->getLabel($request);
+		$this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
+	}
 }

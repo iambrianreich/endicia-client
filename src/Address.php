@@ -46,7 +46,7 @@ class Address
 		'Colombia' => 'CO', 'Comoros' => 'KM', 'Congo, Democratic Republic of the' => 'CD',
 		'Democratic Republic of the Congo' => 'CD', 'Congo, Republic of the' => 'CG',
 		'Republic of the Congo' => 'CG', 'Costa Rica' => 'CR',
-		"Cote d'Ivoire" => 'CI', 'Croatia' => 'HR', 'Cuba' => 'CU',
+		'Cote d\'Ivoire' => 'CI', 'Croatia' => 'HR', 'Cuba' => 'CU',
 		'Curacao' => 'CW', 'Cyprus' => 'CY', 'Czech Republic' => 'CZ',
 		'Denmark' => 'DK', 'Djibouti' => 'DJ', 'Dominica' => 'DM',
 		'Dominican Republic' => 'DO', 'Ecuador' => 'EC', 'Egypt' => 'EG',
@@ -255,11 +255,6 @@ class Address
 	* @param string|null $delivery_point - the two delivery point US Addresses
 	*		only
 	* @param string $country - two character country code
-	* @param string|null $phone - the phone number for the address must be 10
-	*		digits with no punctuation for US or up to 30 digits still with no
-	*		punctuation for International
-	* @param string|null $phone - the email address for the address 0 < len ≤ 64
-	*		characters
 	*
 	* @throws  InvalidArgumentException If the requester id is invalid.
 	*/
@@ -268,15 +263,11 @@ class Address
 		?string $company,
 		string $address_line_1,
 		?string $address_line_2,
-		?string $address_line_3,
-		?string $address_line_4,
 		string $city,
 		string $state,
 		string $postal_code,
 		?string $delivery_point,
-		string $country,
-		?string $phone,
-		?string $email
+		string $country
 	) {
 		// do first as some validation rules depend upon the country
 		$this->setCountry($country);
@@ -289,14 +280,14 @@ class Address
 		$this->setCompany($company);
 		$this->setAddressLine1($address_line_1);
 		$this->setAddressLine2($address_line_2);
-		$this->setAddressLine3($address_line_3);
-		$this->setAddressLine4($address_line_4);
+		$this->setAddressLine3(null);
+		$this->setAddressLine4(null);
 		$this->setCity($city);
 		$this->setState($state);
 		$this->setPostalCode($postal_code);
 		$this->setDeliveryPoint($delivery_point);
-		$this->setPhone($phone);
-		$this->setEmail($email);
+		$this->setPhone(null);
+		$this->setEmail(null);
 	}
 	
 	/**
@@ -311,7 +302,7 @@ class Address
 		if(!$name && !$this->company)
 		{
 			throw new InvalidArgumentException(
-				"The name must be provided unless the company is provided"
+				'The name must be provided unless the company is provided'
 			);
 		}
 		
@@ -320,7 +311,7 @@ class Address
 			if(strlen($name) > 47)
 			{
 				throw new InvalidArgumentException(
-					"The name must not be longer than 47 characters"
+					'The name must not be longer than 47 characters'
 				);
 			}			
 		}
@@ -350,7 +341,7 @@ class Address
 		if(!$company && !$this->name)
 		{
 			throw new InvalidArgumentException(
-				"The company must be provided unless name is provided"
+				'The company must be provided unless name is provided'
 			);
 		}
 		
@@ -359,7 +350,7 @@ class Address
 			if(strlen($company) > 47)
 			{
 				throw new InvalidArgumentException(
-					"The company name must not be longer than 47 characters"
+					'The company name must not be longer than 47 characters'
 				);
 			}
 		}
@@ -389,14 +380,14 @@ class Address
 		if(!$address_line && !$this->company)
 		{
 			throw new InvalidArgumentException(
-				"The address line 1 must be provided unless the company is provided"
+				'The address line 1 must be provided unless the company is provided'
 			);
 		}
 		
 		if(strlen($address_line) > 47)
 		{
 			throw new InvalidArgumentException(
-				"The address line 1 must not be longer than 47 characters"
+				'The address line 1 must not be longer than 47 characters'
 			);
 		}
 		
@@ -425,7 +416,7 @@ class Address
 		if($address_line && strlen($address_line) > 47)
 		{
 			throw new InvalidArgumentException(
-				"The address line 2 must not be longer than 47 characters"
+				'The address line 2 must not be longer than 47 characters'
 			);
 		}
 		
@@ -454,7 +445,7 @@ class Address
 		if($address_line && strlen($address_line) > 47)
 		{
 			throw new InvalidArgumentException(
-				"The address line 3 must not be longer than 47 characters"
+				'The address line 3 must not be longer than 47 characters'
 			);
 		}
 		
@@ -483,7 +474,7 @@ class Address
 		if($address_line && strlen($address_line) > 47)
 		{
 			throw new InvalidArgumentException(
-				"The address line 4 must not be longer than 47 characters"
+				'The address line 4 must not be longer than 47 characters'
 			);
 		}
 		
@@ -512,7 +503,7 @@ class Address
 		if(!$city || strlen($city) > 50 || preg_match('/\A[a-zA-Z\-\. ]+\z/', $city) != 1)
 		{
 			throw new InvalidArgumentException(
-				"The city must not be longer than 50 characters, and contain only a-z, A-Z, space, period and hyphen characters."
+				'The city must not be longer than 50 characters, and contain only a-z, A-Z, space, period and hyphen characters.'
 			);
 		}
 		
@@ -541,7 +532,7 @@ class Address
 		if(!$state)
 		{
 			throw new InvalidArgumentException(
-				"The state of province is required."
+				'The state of province is required.'
 			);
 		}
 		
@@ -554,7 +545,7 @@ class Address
 			else
 			{
 				throw new InvalidArgumentException(
-					"Please provide the state as the accepted two letter code for US addresses."
+					'Please provide the state as the accepted two letter code for US addresses.'
 				);
 			}
 		}
@@ -567,7 +558,7 @@ class Address
 			else
 			{
 				throw new InvalidArgumentException(
-					"Please provide the province as the accepted two letter code for Canadian addresses."
+					'Please provide the province as the accepted two letter code for Canadian addresses.'
 				);
 			}
 		}
@@ -580,7 +571,7 @@ class Address
 			else
 			{
 				throw new InvalidArgumentException(
-					"Please provide the territory as the accepted two/three letter code for Australian addresses."
+					'Please provide the territory as the accepted two/three letter code for Australian addresses.'
 				);
 			}
 		}
@@ -612,7 +603,7 @@ class Address
 		if(!$postal_code)
 		{
 			throw new InvalidArgumentException(
-				"The postal code must be provided."
+				'The postal code must be provided.'
 			);
 		}
 		
@@ -621,7 +612,7 @@ class Address
 			if(preg_match('/\A\d{5}\z/', $postal_code) != 1 && preg_match('/\A\d{5}-\d{4}\z/', $postal_code) != 1)
 			{
 				throw new InvalidArgumentException(
-					"The postal code must be either a 5 digit zip code or a 10 digit (including hyphen) zip+4 for US addresses."
+					'The postal code must be either a 5 digit zip code or a 10 digit (including hyphen) zip+4 for US addresses.'
 				);
 			}
 		}
@@ -630,7 +621,7 @@ class Address
 			if(strlen($postal_code) > 10)
 			{
 				throw new InvalidArgumentException(
-					"The postal code must not be longer than 10 characters."
+					'The postal code must not be longer than 10 characters.'
 				);
 			}
 		}
@@ -660,7 +651,7 @@ class Address
 		if($delivery_point && strlen($delivery_point) != 2)
 		{
 			throw new InvalidArgumentException(
-				"The delivery point must be exactly 2 characters"
+				'The delivery point must be exactly 2 characters'
 			);
 		}
 		
@@ -689,7 +680,7 @@ class Address
 		if(!$country)
 		{
 			throw new InvalidArgumentException(
-				"The country is required"
+				'The country is required'
 			);
 		}
 		
@@ -704,7 +695,7 @@ class Address
 		else
 		{
 			throw new InvalidArgumentException(
-				"The country must be an ISO 3166 two letter country code, a country short name, or a common vulgar country name e.g. USA for United States"
+				'The country must be an ISO 3166 two letter country code, a country short name, or a common vulgar country name e.g. USA for United States'
 			);
 		}
 	}
@@ -750,7 +741,7 @@ class Address
 				if(strlen($phone) > 30 || preg_match('/\A\d+\z/', $phone) != 1)
 				{
 					throw new InvalidArgumentException(
-						"The phone number associated with an international address must not contain characters other than digits and must be exactly 10 characters long."
+						'The phone number associated with an international address must not contain characters other than digits and must be exactly 10 characters long.'
 					);
 				}
 			}
@@ -764,7 +755,7 @@ class Address
 	 *
 	 *	@return string|null ???
 	 */
-	public function getPhone() : string
+	public function getPhone() : ?string
 	{
 		return $this->phone;
 	}
@@ -781,7 +772,7 @@ class Address
 		if($email && strlen($email) > 64)
 		{
 			throw new InvalidArgumentException(
-				"The email address must not be longer than 64 characters"
+				'The email address must not be longer than 64 characters'
 			);
 		}
 		
@@ -793,7 +784,7 @@ class Address
 	 *
 	 *	@return a string which should be a valid email address
 	 */
-	public function getEmail() : string
+	public function getEmail() : ?string
 	{
 		return $this->email;
 	}

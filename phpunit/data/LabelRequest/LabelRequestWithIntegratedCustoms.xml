@@ -1,0 +1,35 @@
+<LabelRequest LabelType="International" LabelSubtype="Integrated">
+	<RequesterID>lxxx</RequesterID>
+	<AccountID>25xxxxx</AccountID>
+	<PassPhrase>your pass phrase</PassPhrase>
+	<MailClass>PriorityMailInternational</MailClass>
+	<WeightOz>16</WeightOz>
+	<MailpieceShape>SmallFlatRateBox</MailpieceShape>
+	<PartnerCustomerID>100</PartnerCustomerID>
+	<PartnerTransactionID>201</PartnerTransactionID>
+	<CustomsInfo>
+		<ContentsType>Merchandise</ContentsType>
+		<CustomsItems>
+			<CustomsItem>
+				<Description>Item 1</Description>
+				<Quantity>1</Quantity>
+				<Weight>12</Weight>
+				<Value>15</Value>
+			</CustomsItem>
+		</CustomsItems>
+	</CustomsInfo>
+	<FromName>John Doe</FromName>
+	<FromCompany>Endicia, Inc.</FromCompany>
+	<ReturnAddress1>278 Castro Street</ReturnAddress1>
+	<FromCity>Mountain View</FromCity>
+	<FromState>CA</FromState>
+	<FromPostalCode>94041</FromPostalCode>
+	<FromPhone>6503212640</FromPhone>
+	<ToName>Jane Smith</ToName>
+	<ToAddress1>1075 W Pender St</ToAddress1>
+	<ToCity>Vancouver</ToCity>
+	<ToState>BC</ToState>
+	<ToPostalCode>V6E 2M6</ToPostalCode>
+	<ToCountryCode>CA</ToCountryCode>
+	<ToPhone>6046854311</ToPhone>
+</LabelRequest>

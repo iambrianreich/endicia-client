@@ -370,6 +370,17 @@ class LabelRequest extends AbstractRequest
 	 */
 	public function getLabelSize() : string
 	{
+		if(is_null($this->labelSize)) {
+			// default size
+			if($this->getUseDestinationConfirmMail()) {
+				// 7x3 is the default size for destination confirm mail
+				return LabelSize::SIZE_7X3;
+			} else {
+				// 4x6 is default size otherwise
+				return LabelSize::SIZE_4X6;
+			}
+		}
+		
 		return $this->labelSize;
 	}
 
@@ -448,11 +459,11 @@ class LabelRequest extends AbstractRequest
 		if($destinationAddress->getEmail()) {
 			$xml .= '<ToEMail>' . $destinationAddress->getEmail() . '</ToEMail>';
 		}
-		if($returnAddress->getName()) {
-			$xml .= '<FromName>' . $returnAddress->getName() . '</FromName>';
-		}
 		if($returnAddress->getCompany()) {
 			$xml .= '<FromCompany>' . $returnAddress->getCompany() . '</FromCompany>';
+		}
+		if($returnAddress->getName()) {
+			$xml .= '<FromName>' . $returnAddress->getName() . '</FromName>';
 		}
 		$xml .= '<ReturnAddress1>' . $returnAddress->getAddressLine1() . '</ReturnAddress1>';
 		if($returnAddress->getAddressLine2()) {

@@ -48,7 +48,7 @@ class ChangePassphraseRequestTest extends ApiTestCase
         $ci = CertifiedIntermediary::createFromToken('fdsfsd');
         $request = new ChangePassPhraseRequest($this->requesterId, $ci, 'This');
         $request->setTokenRequested(false);
-        $this->assertXPathExists($request->toXml(), "/ChangePassPhraseRequest/NewPassPhrase");
+        $this->assertXPathExists($request->toXml(), '/ChangePassPhraseRequest/NewPassPhrase');
     }
 
     public function testEmptyPassPhraseCausesException()

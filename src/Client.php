@@ -123,16 +123,43 @@ class Client
     /**
      * Adds funds to a postage account.
      *
-     * @param  ChangePassPhraseRequest $request The request object.
+     * @param  RecreditRequest $request The request object.
      *
-     * @return ChangePassPhraseRequestResponse Returns the API response.
+     * @return RecreditRequestResponse Returns the API response.
      */
     public function recredit(RecreditRequest $request)
     {
         $this->applySandboxOptions($request);
 
         $response = $this->getClient()->post(
-            $this->getBaseUrl() . '/BuyPostageXML',
+            $this->getBaseUrl() . '/GetPostageLabelXML',
+            [
+                'form_params' => [
+                    'labelRequestXML'=> $request->toXml()
+                ]
+            ]
+        );
+
+        if ($response->getReasonPhrase() != 'OK') {
+            // TODO probably toss a CommunicationException instance
+        }
+
+        return RecreditRequestResponse::fromXml((string) $response->getBody());
+    }
+	
+    /**
+     * Gets a postage label
+     *
+     * @param  LabelRequest $request The request object.
+     *
+     * @return LabelRequestResponse Returns the API response.
+     */
+    public function getLabel(LabelRequest $request)
+    {
+        $this->applySandboxOptions($request);
+
+        $response = $this->getClient()->post(
+            $this->getBaseUrl() . '/GetPostageLabelXML',
             [
                 'form_params' => [
                     'recreditRequestXML'=> $request->toXml()
@@ -144,7 +171,7 @@ class Client
             // TODO WTF?
         }
 
-        return RecreditRequestResponse::fromXml((string) $response->getBody());
+        return LabelRequestResponse::fromXml((string) $response->getBody());
     }
 
     /**
@@ -219,7 +246,7 @@ class Client
     /**
      * Returns the base URL for API requests.
      *
-     * The base URL that is returned is dependant on the mode assigned to the
+     * The base URL that is returned is dependent on the mode assigned to the
      * client. Use the setMode() method or pass a mode to the constructor to
      * switch between Sandbox and Production modes.
      *
@@ -227,13 +254,12 @@ class Client
      */
     public function getBaseUrl() : string
     {
-        switch ($this->getMode()) {
-            case self::MODE_PRODUCTION:
-                return $this->getProductionBaseUrl();
-
-            // There are literally no other choices.
-            default:
-                return $this->getSandboxBaseUrl();
+        if(self::MODE_PRODUCTION == $this->getMode()) {
+			return $this->getProductionBaseUrl();
+		}
+		else
+		{
+			return $this->getSandboxBaseUrl();
         }
     }
 

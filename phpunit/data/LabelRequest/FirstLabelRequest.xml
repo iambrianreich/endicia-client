@@ -1,0 +1,20 @@
+<LabelRequest>
+	<RequesterID>lxxx</RequesterID>
+	<AccountID>25xxxxx</AccountID>
+	<PassPhrase>your pass phrase</PassPhrase>
+	<MailClass>Priority</MailClass>
+	<WeightOz>16</WeightOz>
+	<PartnerCustomerID>100</PartnerCustomerID>
+	<PartnerTransactionID>200</PartnerTransactionID>
+	<ToName>Jane Doe</ToName>
+	<ToAddress1>1 Hacker Way</ToAddress1>
+	<ToCity>Palo Alto</ToCity>
+	<ToState>CA</ToState>
+	<ToPostalCode>94025</ToPostalCode>
+	<FromCompany>Endicia, Inc.</FromCompany>
+	<FromName>John Doe</FromName>
+	<ReturnAddress1>278 Castro Street</ReturnAddress1>
+	<FromCity>Mountain View</FromCity>
+	<FromState>CA</FromState>
+	<FromPostalCode>94041</FromPostalCode>
+</LabelRequest>

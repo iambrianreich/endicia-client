@@ -75,11 +75,11 @@ class RecreditRequestResponse extends AbstractResponse
             }
 
             // Make sure CertifiedIntermediary exists.
-            $ciNodes = $dom->getElementsByTagName("CertifiedIntermediary");
+            $ciNodes = $dom->getElementsByTagName('CertifiedIntermediary');
 
             if ($ciNodes->length == 0) {
-                throw new InvalidArgumentException("RecreditRequestResponse " .
-                    "does not contain CertifiedIntermediary.");
+                throw new InvalidArgumentException('RecreditRequestResponse ' .
+                    'does not contain CertifiedIntermediary.');
             }
 
             $ci = new CertifiedIntermediary();
@@ -90,7 +90,7 @@ class RecreditRequestResponse extends AbstractResponse
             $accountId = $xp->query('CertifiedIntermediary/AccountID');
 
             if ($accountId->length == 0) {
-                throw new InvaliArgumentException('CertifiedIntermediary did ' .
+                throw new InvalidArgumentException('CertifiedIntermediary did ' .
                     'not contain an AccountID');
             }
 
@@ -162,7 +162,7 @@ class RecreditRequestResponse extends AbstractResponse
             return $response;
         } catch (\Exception $e) {
             throw new InvalidArgumentException(
-                "Invalid RecreditRequestResponse XML. " .
+                'Invalid RecreditRequestResponse XML. ' .
                 $e->getMessage(),
                 null,
                 $e
