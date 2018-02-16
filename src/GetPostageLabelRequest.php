@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains the RWC\Endicia\GetLabelRequest class.
+ * This file contains the RWC\Endicia\GetPostageLabelRequest class.
  *
  * @author     Tom Egan <tom@tomegan.tech>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
@@ -16,23 +16,22 @@ use RWC\Endicia\InvalidArgumentException;
 use RWC\Endicia\MailClass;
 
 /**
- *	A LabelRequest fetches a printable postage label.
+ *	A GetPostageLabelRequest is used to fetch a printable postage label.
  *
- *	The LabelRequest requires the basic request parameters required by all
- *		Endicia requests: a requester id and a CertifiedIntermediary
- *		(authentication credentials) which will actually be charged for the
- *		activity.
+ *	The GetPostageLabelRequest requires the basic request parameters
+ *		required by all Endicia requests: a requester id and a
+ *		CertifiedIntermediary (authentication credentials) which will
+ *		actually be charged for the activity.
  *
- *	The LabelRequest also requires the label size, the image format, the
- *		mail class, the mailpiece weight (in ounces), the mailpiece shape, the
- *		pickup/origin postal code, the From/Return Address and the To/Destination
+ *	The GetPostageLabelRequest also requires the mail class, the mailpiece
+ *		weight (in ounces), the From/Return Address and the To/Destination
  *		Address
  *
  * @author     Tom Egan <tom@tomegan.tech>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
-class LabelRequest extends AbstractRequest
+class GetPostageLabelRequest extends AbstractRequest
 {
 
 	/**

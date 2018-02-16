@@ -240,6 +240,8 @@ abstract class AbstractResponse
 
             if ($errorMessage->length > 0) {
                 $response->setErrorMessage($errorMessage[0]->nodeValue);
+            } else {
+            	$response->setErrorMessage('');
             }
             
             return $response;

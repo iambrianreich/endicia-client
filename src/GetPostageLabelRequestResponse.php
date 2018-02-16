@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains the RWC\Endicia\LabelRequestResponse class.
+ * This file contains the RWC\Endicia\GetPostageLabelRequestResponse class.
  *
  * @author     Brian Reich <breich@reich-consulting.net>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
@@ -14,17 +14,18 @@ use RWC\Endicia\InvalidArgumentException;
 use RWC\Endicia\AbstractResponse;
 
 /**
- *	A LabelRequestResponse is a response from the GetPostageLabel API service.
+ *	A GetPostageLabelRequestResponse is a response from the GetPostageLabel
+ *		API service.
  *
  *	The response specifies whether or not the request was successful through the
- *	Status and ErrorMessage fields. If the request was successful, the label will
- *	be available via getLabel.
+ *		Status and ErrorMessage fields. If the request was successful, the label
+ *		will be available via getLabel.
  *
  * @author     Tom Egan <tom@tomegan.tech>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
-class LabelRequestResponse extends AbstractResponse
+class GetPostageLabelRequestResponse extends AbstractResponse
 {
     /**
      * The label as a list of base 64 encoded image fragments.
@@ -63,7 +64,7 @@ class LabelRequestResponse extends AbstractResponse
 	 *		one type of a wide variety of data types from JPEG image data to
 	 *		text based printer instruction (ZPLII)
 	 */
-	public function getLabel() : string
+	public function getPostageLabel() : string
 	{
 		return base64_decode($this->getBase64EncodedLabel());
 	}
@@ -86,7 +87,7 @@ class LabelRequestResponse extends AbstractResponse
 	}
 	
 	/**
-	 *	Construct a LabelRequestResponse Object from xml data
+	 *	Construct a GetPostageLabelRequestResponse Object from xml data
 	 *
 	 *	@param string xml - the xml data to parse and use to populate the
 	 *		object properties
@@ -100,7 +101,7 @@ class LabelRequestResponse extends AbstractResponse
     public static function fromXml(string $xml, AbstractResponse $response = null) : AbstractResponse
     {
         // Force an object.
-        $response = $response ?? new LabelRequestResponse();
+        $response = $response ?? new GetPostageLabelRequestResponse();
 
         try {
             parent::fromXml($xml, $response);

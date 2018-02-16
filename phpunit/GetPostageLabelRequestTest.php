@@ -5,11 +5,11 @@ namespace Tests\RWC\Endicia;
 use PHPUnit\Framework\TestCase;
 use RWC\Endicia\Address;
 use RWC\Endicia\CertifiedIntermediary;
+use RWC\Endicia\GetPostageLabelRequest;
 use RWC\Endicia\InvalidArgumentException;
-use RWC\Endicia\LabelRequest;
 use RWC\Endicia\MailClass;
 
-class LabelRequestTest extends TestCase
+class GetPostageLabelRequestTest extends TestCase
 {
 	private $requesterId = 'lxxx';
 	private $accountId = '25xxxxx';
@@ -39,7 +39,7 @@ class LabelRequestTest extends TestCase
 		$to = new Address('Jane Doe', NULL, '1 Hacker Way', NULL, 'Palo Alto', 'CA', '94025', NULL, 'US');
 		$from = new Address('John Doe', 'Endicia, Inc.', '278 Castro Street', NULL, 'Mountain View', 'CA', '94041', NULL, 'US');
 		
-		$labelRequest = new LabelRequest(
+		$labelRequest = new GetPostageLabelRequest(
 			$this->requesterId,
 			$ci,
 			MailClass::PRIORITY,
@@ -48,11 +48,11 @@ class LabelRequestTest extends TestCase
 			$to
 		);
 		
-		$this->assertInstanceOf(LabelRequest::class, $labelRequest);
+		$this->assertInstanceOf(GetPostageLabelRequest::class, $labelRequest);
 		
 		/* XML representation of the "First Label Request" example from documentation */
 		$expected = new \DOMDocument();
-		$expected->load(__DIR__ . '/data/LabelRequest/FirstLabelRequest.xml');
+		$expected->load(__DIR__ . '/data/GetPostageLabelRequest/FirstLabelRequest.xml');
 		
 		$actual = new \DOMDocument();
 		$actual->loadXml($labelRequest->toXml());

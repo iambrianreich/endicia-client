@@ -135,7 +135,7 @@ class Client
             $this->getBaseUrl() . '/GetPostageLabelXML',
             [
                 'form_params' => [
-                    'labelRequestXML'=> $request->toXml()
+                    'recreditRequestXML'=> $request->toXml()
                 ]
             ]
         );
@@ -150,11 +150,11 @@ class Client
     /**
      * Gets a postage label
      *
-     * @param  LabelRequest $request The request object.
+     * @param  GetPostageLabelRequest $request The request object.
      *
-     * @return LabelRequestResponse Returns the API response.
+     * @return GetPostageLabelRequestResponse Returns the API response.
      */
-    public function getLabel(LabelRequest $request)
+    public function getPostageLabel(GetPostageLabelRequest $request)
     {
         $this->applySandboxOptions($request);
 
@@ -162,7 +162,7 @@ class Client
             $this->getBaseUrl() . '/GetPostageLabelXML',
             [
                 'form_params' => [
-                    'recreditRequestXML'=> $request->toXml()
+                    'labelRequestXML'=> $request->toXml()
                 ]
             ]
         );
@@ -171,7 +171,7 @@ class Client
             // TODO WTF?
         }
 
-        return LabelRequestResponse::fromXml((string) $response->getBody());
+        return GetPostageLabelRequestResponse::fromXml((string) $response->getBody());
     }
 
     /**
@@ -214,7 +214,7 @@ class Client
      *
      * @param string $mode The run mode for the Client.
      */
-    public function setMode(string $mode = 'production') : void
+    public function setMode(string $mode = self::MODE_PRODUCTION) : void
     {
         if (! $this->isValidMode($mode)) {
             throw new InvalidArgumentException('Invalid run mode ' . $mode);
@@ -298,7 +298,7 @@ class Client
     }
 
     /**
-     * Checks if the Client is in sandbox mode and changes request appropriatly.
+     * Checks if the Client is in sandbox mode and changes request appropriately.
      *
      * If the Client is in sandbox mode, the request will be modified to use the
      * requester id that all sandbox API requests require.

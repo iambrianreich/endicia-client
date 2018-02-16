@@ -3,10 +3,13 @@
  namespace Tests\RWC\Endicia;
 
 use RWC\Endicia\Testing\ApiTestCase;
+use RWC\Endicia\Address;
 use RWC\Endicia\Client;
 use RWC\Endicia\InvalidArgumentException;
 use RWC\Endicia\CertifiedIntermediary;
 use RWC\Endicia\ChangePassPhraseRequest;
+use RWC\Endicia\GetPostageLabelRequest;
+use RWC\Endicia\MailClass;
 use RWC\Endicia\RecreditRequest;
 
 class ClientTest extends ApiTestCase
@@ -108,11 +111,14 @@ class ClientTest extends ApiTestCase
 		$client = new Client(Client::MODE_SANDBOX);
         $requesterId = $client->getSandboxRequesterId();
         $ci = $this->getCertifiedIntermediary();
-		$to = new Address('Jane Doe', NULL, '1 Hacker Way', NULL, NULL, NULL, 'Palo Alto', 'CA', '94025', NULL, 'US', NULL, NULL);
-		$from = new Address('Jane Doe', 'Endicia, Inc.', '278 Castro Street', NULL, NULL, NULL, 'Mountain View', 'CA', '94041', NULL, 'US', NULL, NULL);
+		$to = new Address('Jane Doe', NULL, '1 Hacker Way', NULL, 'Palo Alto', 'CA', '94025', NULL, 'US');
+		$from = new Address('Jane Doe', 'Endicia, Inc.', '278 Castro Street', NULL, 'Mountain View', 'CA', '94041', NULL, 'US');
 		
-		$request = new LabelRequest($requesterId, $ci, MailClass::PRIORITY, 16.0, $from, $to);
-		$response = $client->getLabel($request);
+		$request = new GetPostageLabelRequest($requesterId, $ci, MailClass::PRIORITY, 16.0, $from, $to);
+		$response = $client->getPostageLabel($request);
 		$this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
+		
+		$image = imagecreatefromstring($response->getPostageLabel());	// returns FALSE if not bitmap image data
+		$this->assertNotTrue($image, 'Label data did not represent bitmap image'); // fails if $image is false
 	}
 }
