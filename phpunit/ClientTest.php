@@ -119,6 +119,6 @@ class ClientTest extends ApiTestCase
 		$this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
 		
 		$image = imagecreatefromstring($response->getPostageLabel());	// returns FALSE if not bitmap image data
-		$this->assertNotTrue($image, 'Label data did not represent bitmap image'); // fails if $image is false
+		$this->assertThat($image, $this->logicalNot($this->isFalse()), 'Label data did not represent bitmap image');
 	}
 }

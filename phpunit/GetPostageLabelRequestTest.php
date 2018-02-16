@@ -7,6 +7,7 @@ use RWC\Endicia\Address;
 use RWC\Endicia\CertifiedIntermediary;
 use RWC\Endicia\GetPostageLabelRequest;
 use RWC\Endicia\InvalidArgumentException;
+use RWC\Endicia\LabelImageFormat;
 use RWC\Endicia\MailClass;
 
 class GetPostageLabelRequestTest extends TestCase
@@ -28,7 +29,6 @@ class GetPostageLabelRequestTest extends TestCase
 	
 	/**
 	 *	@depends testAddress
-	 *	@depends testCreateLabel
 	 */
 	public function testSimpleDomesticLabel() : void
 	{
@@ -136,5 +136,84 @@ class GetPostageLabelRequestTest extends TestCase
 		
 		$fromPostalCode = $fromPostalCodeNodeList[0]->textContent;
 		$this->assertEquals($fromPostalCode, '94041');
+	}
+	
+	/**
+	 *	@depends testAddress
+	 *	@depends testSimpleDomesticLabel
+	 */
+	public function testTestRequest() : void
+	{
+		$ci = CertifiedIntermediary::createFromCredentials(
+			$this->accountId,
+			$this->passPhrase
+		);
+		$to = new Address('Jane Doe', NULL, '1 Hacker Way', NULL, 'Palo Alto', 'CA', '94025', NULL, 'US');
+		$from = new Address('John Doe', 'Endicia, Inc.', '278 Castro Street', NULL, 'Mountain View', 'CA', '94041', NULL, 'US');
+		
+		$labelRequest = new GetPostageLabelRequest(
+			$this->requesterId,
+			$ci,
+			MailClass::PRIORITY,
+			16,
+			$from,
+			$to
+		);
+		
+		// tested to here
+		$xmlDocument = new \DOMDocument();
+		$xmlDocument->loadXml($labelRequest->toXml());
+		
+		$this->assertThat($xmlDocument->firstChild->hasAttribute('Test'), $this->isFalse());
+		
+		$labelRequest->setTest(true);
+		$this->assertTrue($labelRequest->isTest());
+		
+		$xmlDocument = new \DOMDocument();
+		$xmlDocument->loadXml($labelRequest->toXml());
+		
+		$this->assertTrue($xmlDocument->firstChild->hasAttribute('Test'));
+		$this->assertEquals($xmlDocument->firstChild->getAttribute('Test'), 'YES');
+	}
+	
+	/**
+	 *	@depends testAddress
+	 *	@depends testSimpleDomesticLabel
+	 */
+	public function testRequestImageFormat() : void
+	{
+		$ci = CertifiedIntermediary::createFromCredentials(
+			$this->accountId,
+			$this->passPhrase
+		);
+		$to = new Address('Jane Doe', NULL, '1 Hacker Way', NULL, 'Palo Alto', 'CA', '94025', NULL, 'US');
+		$from = new Address('John Doe', 'Endicia, Inc.', '278 Castro Street', NULL, 'Mountain View', 'CA', '94041', NULL, 'US');
+		
+		$labelRequest = new GetPostageLabelRequest(
+			$this->requesterId,
+			$ci,
+			MailClass::PRIORITY,
+			16,
+			$from,
+			$to
+		);
+		
+		// tested to here
+		$this->assertTrue($labelRequest->isImageFormatDefault());
+		
+		$xmlDocument = new \DOMDocument();
+		$xmlDocument->loadXml($labelRequest->toXml());
+		
+		$this->assertThat($xmlDocument->firstChild->hasAttribute('ImageFormat'), $this->isFalse());
+		
+		$labelRequest->setImageFormat(LabelImageFormat::ZPLII);
+		$this->assertThat($labelRequest->isImageFormatDefault(), $this->isFalse());
+		$this->assertEquals($labelRequest->getImageFormat(), LabelImageFormat::ZPLII);
+		
+		$xmlDocument = new \DOMDocument();
+		$xmlDocument->loadXml($labelRequest->toXml());
+		
+		$this->assertTrue($xmlDocument->firstChild->hasAttribute('ImageFormat'));
+		$this->assertEquals($xmlDocument->firstChild->getAttribute('ImageFormat'), LabelImageFormat::ZPLII);
 	}
 }
