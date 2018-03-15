@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+
+<?php
+
+// Load the Composer PSR-4 Autoloader
+require_once 'vendor/autoload.php';
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+$app->add(new RWC\Endicia\Commands\ChangePassPhraseCommand());
+$app->run();

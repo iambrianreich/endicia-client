@@ -42,7 +42,7 @@ class Client
      *
      * @var  string
      */
-    const PRODUCTION_URL = '';
+    const PRODUCTION_URL = 'https://labelserver.endicia.com/LabelService/EwsLabelService.asmx';
 
     /**
      * The URL of the sandbox API.
@@ -146,7 +146,7 @@ class Client
 
         return RecreditRequestResponse::fromXml((string) $response->getBody());
     }
-	
+    
     /**
      * Gets a postage label
      *
@@ -225,7 +225,7 @@ class Client
 
     /**
      * Returns the client mode (production or sandbox).
-	 *
+     *
      * @return string Returns the client's mode.
      */
     public function getMode() : string
@@ -254,12 +254,10 @@ class Client
      */
     public function getBaseUrl() : string
     {
-        if(self::MODE_PRODUCTION == $this->getMode()) {
-			return $this->getProductionBaseUrl();
-		}
-		else
-		{
-			return $this->getSandboxBaseUrl();
+        if (self::MODE_PRODUCTION == $this->getMode()) {
+            return $this->getProductionBaseUrl();
+        } else {
+            return $this->getSandboxBaseUrl();
         }
     }
 
