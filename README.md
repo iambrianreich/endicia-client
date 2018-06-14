@@ -53,7 +53,7 @@ RWC\Endicia\CertifiedIntermediary instance to pass along with requests.
 	$ci = CertifiedIntermediary::createFromToken('YOUR_TOKEN_VALUE');
 ```
 
-You are no ready to make a request to the API. In general you will create a
+You are now ready to make a request to the API. In general you will create a
 request, invoke it by passing it as a parameter to the correct method on Client
 and receive a AbstractResponse type object as the return value from that method
 call. If the response is successful you can retrieve information from the
