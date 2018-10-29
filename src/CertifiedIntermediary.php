@@ -105,29 +105,24 @@ class CertifiedIntermediary
      */
     public function toXml() : string
     {
-        $xml = '<CertifiedIntermediary>';
+        $xml = new \DOMDocument();
+
+        $ciEl = $xml->createElement('CertifiedIntermediary');
 
         if (! empty($this->getToken())) {
             // Use Token
-            $xml .= sprintf(
-                '<Token>%s</Token>',
-                htmlspecialchars($this->getToken())
-            );
+            $tokenEl = $xml->createElement('Token', htmlspecialchars($this->getToken()));
+            $ciEl->appendChild($tokenEl);
         } else {
             // Use credential set.
-            $xml .= sprintf(
-                '<AccountID>%s</AccountID>',
-                htmlspecialchars($this->getAccountId())
-            );
-            $xml .= sprintf(
-                '<PassPhrase>%s</PassPhrase>',
-                htmlspecialchars($this->getPassPhrase())
-            );
+            $idEl = $xml->createElement('AccountID', htmlspecialchars($this->getAccountId()));
+            $ciEl->appendChild($idEl);
+
+            $passEl = $xml->createElement('PassPhrase', htmlspecialchars($this->getPassPhrase()));
+            $ciEl->appendChild($passEl);
         }
 
-        $xml .= '</CertifiedIntermediary>';
-
-        return $xml;
+        return $xml->saveXML($ciEl);
     }
 
     /**
@@ -186,7 +181,7 @@ class CertifiedIntermediary
      *
      * @param string $accountId The Endicia postage account's account id.
      *
-     * @throw InvalidArgumentException if the account id is invalid.
+     * @throws InvalidArgumentException if the account id is invalid.
      */
     protected function setAccountId(string $accountId) : void
     {
@@ -236,7 +231,7 @@ class CertifiedIntermediary
      *
      * @param string $token The Endicia account token.
      *
-     * @throws InvalidArgumentExceptiono if token is empty or invalid length.
+     * @throws InvalidArgumentException if token is empty or invalid length.
      */
     protected function setToken(string $token) : void
     {

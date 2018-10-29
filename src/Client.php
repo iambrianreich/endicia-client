@@ -99,6 +99,9 @@ class Client
      * @param  ChangePassPhraseRequest $request The request object.
      *
      * @return ChangePassPhraseRequestResponse Returns the API response.
+     *
+     * @throws \RWC\Endicia\EndiciaException
+     * @throws \RWC\Endicia\InvalidArgumentException
      */
     public function changePassPhrase(ChangePassPhraseRequest $request)
     {
@@ -118,6 +121,30 @@ class Client
         }
 
         return ChangePassPhraseRequestResponse::fromXml((string) $response->getBody());
+    }
+
+    /**
+     * Requests a postage rate given a set of parameters
+     *
+     * @param PostageRateRequest $request The request object
+     *
+     * @return AbstractResponse Returns the API response
+     *
+     * @throws \RWC\Endicia\EndiciaException
+     * @throws \RWC\Endicia\InvalidArgumentException
+     */
+    public function postageRateRequest(PostageRateRequest $request)
+    {
+        $response = $this->getClient()->post(
+            $this->getBaseUrl() . '/PostageRateXML?op=PostageRateXML',
+            [
+                'form_params' => [
+                    'postageRateRequestXML' => $request->toXml()
+                ]
+            ]
+        );
+
+        return PostageRateRequestResponse::fromXml((string) $response->getBody());
     }
     
     /**

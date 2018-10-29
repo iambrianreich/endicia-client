@@ -2,6 +2,9 @@
 
  namespace Tests\RWC\Endicia;
 
+use RWC\Endicia\Constants;
+use RWC\Endicia\MailpieceDimensions;
+use RWC\Endicia\ResponseOptions;
 use RWC\Endicia\Testing\ApiTestCase;
 use RWC\Endicia\Address;
 use RWC\Endicia\Client;
@@ -11,6 +14,7 @@ use RWC\Endicia\ChangePassPhraseRequest;
 use RWC\Endicia\GetPostageLabelRequest;
 use RWC\Endicia\MailClass;
 use RWC\Endicia\RecreditRequest;
+use RWC\Endicia\PostageRateRequest;
 
 class ClientTest extends ApiTestCase
 {
@@ -47,6 +51,40 @@ class ClientTest extends ApiTestCase
 
         $request->setPassPhrase($oldPassPhrase);
         $response = $client->changePassPhrase($request);
+        $this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
+    }
+
+    public function testPostageRateRequestSucceeds()
+    {
+        $client        = new Client(Client::MODE_SANDBOX);
+        $requesterId   = $client->getSandboxRequesterId();
+        $ci            = $this->getCertifiedIntermediary();
+        $request       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            Constants::MAILCLASS_PRIORITY,
+            32.0,
+            12345,
+            11215,
+            null,
+            null,
+            Constants::MAILSHAPE_LARGEFLATRATEBOX,
+            new MailpieceDimensions(12.25, 12.25, 6.0),
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response = $client->postageRateRequest($request);
         $this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
     }
 
