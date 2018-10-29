@@ -149,17 +149,28 @@ abstract class AbstractRequest
      */
     public function toXml() : string
     {
-        $xml = sprintf(
-            '<RequesterID>%s</RequesterID>',
-            htmlentities($this->getRequesterId())
-        );
-        $xml .= sprintf(
-            '<RequestID>%s</RequestID>',
-            htmlentities($this->getRequestId())
-        );
+        $xml = new \DOMDocument();
 
-        $xml .= $this->getCertifiedIntermediary()->toXml();
+        $requesterIdEl = $xml->createElement('RequesterID', htmlentities($this->getRequesterId()));
+        $xml->appendChild($requesterIdEl);
 
-        return $xml;
+        $requestIdEl = $xml->createElement('RequestID', htmlentities($this->getRequestId()));
+        $xml->appendChild($requestIdEl);
+
+        $ciEl = $xml->importNode(\DOMDocument::loadXML($this->getCertifiedIntermediary()->toXml()));
+        $xml->appendChild($ciEl);
+
+//        $xml = sprintf(
+//            '<RequesterID>%s</RequesterID>',
+//            htmlentities($this->getRequesterId())
+//        );
+//        $xml .= sprintf(
+//            '<RequestID>%s</RequestID>',
+//            htmlentities($this->getRequestId())
+//        );
+//
+//        $xml .= $this->getCertifiedIntermediary()->toXml();
+
+        return $xml->saveXML();
     }
 }
