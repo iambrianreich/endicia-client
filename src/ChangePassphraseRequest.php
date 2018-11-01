@@ -2,6 +2,7 @@
 
 namespace RWC\Endicia;
 
+use DOMDocument;
 use RWC\Endicia\AbstractRequest;
 
 /**
@@ -31,10 +32,11 @@ class ChangePassphraseRequest extends AbstractRequest
     /**
      * Creates a new ChangePassphraseRequest.
      *
-     * @param string                $requesterId           The requester's id.
+     * @param string $requesterId The requester's id.
      * @param CertifiedIntermediary $certifiedIntermediary The postage account credential.
-     * @param string                $newPassPhrase         The new pass phrase.
-     * @param bool|boolean          $tokenRequested        True to request a security token.
+     * @param string $newPassPhrase The new pass phrase.
+     * @param bool|boolean $tokenRequested True to request a security token.
+     * @throws InvalidArgumentException
      */
     public function __construct(
         string $requesterId,
@@ -115,23 +117,29 @@ class ChangePassphraseRequest extends AbstractRequest
      */
     public function toXml() : string
     {
-        $xml  = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-        
-        $xml .= sprintf(
-            '<ChangePassPhraseRequest TokenRequested="%s" >',
+        return $this->toDOMDocument()->saveXML();
+    }
+
+    /**
+     * @return DOMDocument
+     */
+    public function toDOMDocument(): DOMDocument
+    {
+        $document = new DOMDocument();
+
+        $root = $document->createElement('ChangePassPhraseRequest');
+        $document->appendChild($root);
+
+        $root->setAttribute('TokenRequested',
             $this->getTokenRequested() ? 'true' : 'false'
         );
 
-        $xml .= parent::toXml();
-        
-        $xml .= sprintf(
-        
-            '<NewPassPhrase>%s</NewPassPhrase>',
-            htmlentities($this->getNewPassPhrase())
-        );
-        
-        $xml .= '</ChangePassPhraseRequest>';
+        $root->appendChild($document->createElement('RequesterID', $this->getRequesterId()));
+        $root->appendChild($document->createElement('RequestID', $this->getRequestId()));
+        $root->appendChild($this->getCertifiedIntermediary()->toDOMElement($document));
 
-        return $xml;
+        $root->appendChild($document->createElement('NewPassPhrase', $this->getNewPassPhrase()));
+
+        return $document;
     }
 }

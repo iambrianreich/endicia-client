@@ -10,7 +10,10 @@
 
 namespace RWC\Endicia;
 
-class ResponseOptions
+use DOMDocument;
+use DOMElement;
+
+class ResponseOptions implements IRequestElement
 {
     /**
      * @var bool Allows the response to include postage price
@@ -42,13 +45,27 @@ class ResponseOptions
         $this->postagePrice = $postagePrice;
     }
 
+    /**
+     * @return string
+     */
     public function toXml() : string
     {
-        $xml = new \DOMDocument();
+        $document = new DOMDocument();
+        $responseOptionsEl = $this->toDOMElement($document);
+        return $document->saveXML($responseOptionsEl);
+    }
 
-        $optionsEl = $xml->createElement('ResponseOptions');
+    /**
+     * Returns the element as a DOMElement created from a given DOM.
+     *
+     * @param \DOMDocument $document The DOMDocument used to create the element.
+     * @return DOMElement Returns the generated DOMElement.
+     */
+    public function toDOMElement(\DOMDocument $document): DOMElement
+    {
+        $optionsEl = $document->createElement('ResponseOptions');
         $optionsEl->setAttribute('PostagePrice', (string) $this->isPostagePrice());
 
-        return $xml->saveXML($optionsEl);
+        return $optionsEl;
     }
 }

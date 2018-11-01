@@ -10,6 +10,7 @@
 
 namespace RWC\Endicia;
 
+use DOMDocument;
 use RWC\Endicia\AbstractRequest;
 use RWC\Endicia\InvalidArgumentException;
 
@@ -110,13 +111,27 @@ class RecreditRequest extends AbstractRequest
      */
     public function toXml() : string
     {
-        return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" .
-               '<RecreditRequest>' .
-               parent::toXml() .
-               sprintf(
-                   '<RecreditAmount>%.2f</RecreditAmount>',
-                   $this->getRecreditAmount()
-               ) .
-               '</RecreditRequest>';
+        return $this->toDOMDocument()->saveXML();
+    }
+
+    /**
+     * @return DOMDocument
+     */
+    public function toDOMDocument(): DOMDocument
+    {
+        $document = new DOMDocument();
+        $root = $document->createElement('RecreditRequest');
+        $document->appendChild($root);
+
+        $root->appendChild($document->createElement('RequesterID', $this->getRequesterId()));
+        $root->appendChild($document->createElement('RequestID', $this->getRequestId()));
+        $root->appendChild($this->getCertifiedIntermediary()->toDOMElement($document));
+
+        $root->appendChild($document->createElement(
+            'RecreditAmount',
+            sprintf('%.2f', $this->getRecreditAmount()))
+        );
+
+        return $document;
     }
 }

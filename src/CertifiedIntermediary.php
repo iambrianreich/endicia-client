@@ -10,6 +10,9 @@
 
 namespace RWC\Endicia;
 
+use DOMDocument;
+use DOMElement;
+
 /**
  * CertifiedIntermediary provides Endicia Postage Account credentials.
  *
@@ -39,7 +42,7 @@ namespace RWC\Endicia;
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
-class CertifiedIntermediary
+class CertifiedIntermediary implements IRequestElement
 {
     /**
      * The account id for the Endicia postage account.
@@ -105,26 +108,42 @@ class CertifiedIntermediary
      */
     public function toXml() : string
     {
-        $xml = new \DOMDocument();
-
-        $ciEl = $xml->createElement('CertifiedIntermediary');
-
-        if (! empty($this->getToken())) {
-            // Use Token
-            $tokenEl = $xml->createElement('Token', htmlspecialchars($this->getToken()));
-            $ciEl->appendChild($tokenEl);
-        } else {
-            // Use credential set.
-            $idEl = $xml->createElement('AccountID', htmlspecialchars($this->getAccountId()));
-            $ciEl->appendChild($idEl);
-
-            $passEl = $xml->createElement('PassPhrase', htmlspecialchars($this->getPassPhrase()));
-            $ciEl->appendChild($passEl);
-        }
-
-        return $xml->saveXML($ciEl);
+        $document = new DOMDocument();
+        $changePassPhraseElement = $this->toDOMElement($document);
+        return $document->saveXML($changePassPhraseElement);
     }
 
+    /**
+     * Returns the element as a DOMElement created from a given DOM.
+     *
+     * @param \DOMDocument $document The DOMDocument used to create the element.
+     * @return DOMElement Returns the generated DOMElement.
+     */
+    public function toDOMElement(\DOMDocument $document) : DOMElement
+    {
+        $ciEl = $document->createElement('CertifiedIntermediary');
+
+        // If a token is being used to authenticate, use it.
+        if (! empty($this->getToken())) {
+            // Use Token
+            $ciEl->appendChild($document->createElement('Token', $this->getToken()));
+            return $ciEl;
+        }
+
+        // Otherwise, use credentials.
+        $ciEl->appendChild($document->createElement(
+            'AccountID',
+            $this->getAccountId())
+        );
+
+
+        $ciEl->appendChild($document->createElement(
+            'PassPhrase',
+            $this->getPassPhrase())
+        );
+
+        return $ciEl;
+    }
     /**
      * Creates a new CertifiedIntermediary from a security token.
      *

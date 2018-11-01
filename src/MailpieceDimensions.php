@@ -10,7 +10,10 @@
 
 namespace RWC\Endicia;
 
-class MailpieceDimensions
+use DOMDocument;
+use DOMElement;
+
+class MailpieceDimensions implements IRequestElement
 {
     /**
      * The length of the mail piece in inches
@@ -117,19 +120,24 @@ class MailpieceDimensions
      */
     public function toXml() : string
     {
-        $xml = new \DOMDocument();
+        $document = new DOMDocument();
+        $mailPieceDimensions = $this->toDOMElement($document);
+        return $document->saveXML($mailPieceDimensions);
+    }
 
-        $dimEl = $xml->createElement('MailpieceDimensions');
+    /**
+     * Returns the element as a DOMElement created from a given DOM.
+     *
+     * @param \DOMDocument $document The DOMDocument used to create the element.
+     * @return DOMElement Returns the generated DOMElement.
+     */
+    public function toDOMElement(\DOMDocument $document): DOMElement
+    {
+        $dimEl = $document->createElement('MailpieceDimensions');
+        $dimEl->appendChild($document->createElement('Length', ($this->getLength())));
+        $dimEl->appendChild($document->createElement('Width', $this->getWidth()));
+        $dimEl->appendChild($document->createElement('Height', $this->getHeight()));
 
-        $lengthEl = $xml->createElement('Length', htmlspecialchars($this->getLength()));
-        $dimEl->appendChild($lengthEl);
-
-        $widthEl = $xml->createElement('Width', htmlspecialchars($this->getWidth()));
-        $dimEl->appendChild($widthEl);
-
-        $heightEl = $xml->createElement('Height', htmlspecialchars($this->getHeight()));
-        $dimEl->appendChild($heightEl);
-
-        return $xml->saveXML($dimEl);
+        return $dimEl;
     }
 }

@@ -10,9 +10,9 @@
 
 namespace RWC\Endicia;
 
-use \RWC\Endicia\Constants;
+use DOMDocument;
 
-class PostageRateRequest extends AbstractRequest
+class PostageRateRequest extends AbstractRequest implements IXMLRequest
 {
     /**
      * The Mail Class to use for the rate request
@@ -701,16 +701,25 @@ class PostageRateRequest extends AbstractRequest
      */
     public function toXml() : string
     {
-        $xml = new \DOMDocument();
+        return $this->toDOMDocument()->saveXML();
+    }
 
+    /**
+     * @return DOMDocument
+     */
+    public function toDOMDocument(): DOMDocument
+    {
+        $xml = new DOMDocument();
         $rateReqEl = $xml->createElement('PostageRateRequest');
-        throw new \Exception(parent::toXml());
-        $rateReqEl->appendChild($xml->loadXML(parent::toXml()));
 
-        $rateReqEl->appendChild($xml->createElement('MailClass', htmlentities($this->getMailClass())));
-        $rateReqEl->appendChild($xml->createElement('WeightOz', htmlentities($this->getWeight())));
-        $rateReqEl->appendChild($xml->createElement('FromPostalCode', htmlentities($this->getFromPostalCode())));
-        $rateReqEl->appendChild($xml->createElement('ToPostalCode', htmlentities($this->getToPostalCode())));
+        $xml->appendChild($xml->createElement('RequesterID', $this->getRequesterId()));
+        $xml->appendChild($xml->createElement('RequestID', $this->getRequestId()));
+        $xml->appendChild($this->getCertifiedIntermediary()->toDOMElement($xml));
+
+        $rateReqEl->appendChild($xml->createElement('MailClass', $this->getMailClass()));
+        $rateReqEl->appendChild($xml->createElement('WeightOz', $this->getWeight()));
+        $rateReqEl->appendChild($xml->createElement('FromPostalCode', $this->getFromPostalCode()));
+        $rateReqEl->appendChild($xml->createElement('ToPostalCode', $this->getToPostalCode()));
 
         // Optional elements
         if ($this->getServices() != null) {
@@ -725,54 +734,70 @@ class PostageRateRequest extends AbstractRequest
             $rateReqEl->appendChild($servicesEl);
         }
 
-        if ($this->getFromCountryCode() != null)
-            $rateReqEl->appendChild($xml->createElement('FromCountryCode', htmlentities($this->getFromCountryCode())));
+        if ($this->getFromCountryCode() != null) {
+            $rateReqEl->appendChild($xml->createElement('FromCountryCode', $this->getFromCountryCode()));
+        }
 
-        if ($this->getToCountryCode() != null)
-            $rateReqEl->appendChild($xml->createElement('ToCountryCode', htmlentities($this->getToCountryCode())));
+        if ($this->getToCountryCode() != null) {
+            $rateReqEl->appendChild($xml->createElement('ToCountryCode', $this->getToCountryCode()));
+        }
 
-        if ($this->getMailpieceShape() != null)
-            $rateReqEl->appendChild($xml->createElement('MailpieceShape', htmlentities($this->getMailpieceShape())));
+        if ($this->getMailpieceShape() != null) {
+            $rateReqEl->appendChild($xml->createElement('MailpieceShape', $this->getMailpieceShape()));
+        }
 
-        if ($this->getPricing() != null)
-            $rateReqEl->appendChild($xml->createElement('Pricing', htmlentities($this->getPricing())));
+        if ($this->getPricing() != null) {
+            $rateReqEl->appendChild($xml->createElement('Pricing', $this->getPricing()));
+        }
 
-        if ($this->getServiceLevel() != null)
-            $rateReqEl->appendChild($xml->createElement('ServiceLevel', htmlentities($this->getServiceLevel())));
+        if ($this->getServiceLevel() != null) {
+            $rateReqEl->appendChild($xml->createElement('ServiceLevel', $this->getServiceLevel()));
+        }
 
-        if ($this->getSundayHolidayDelivery() != null)
-            $rateReqEl->appendChild($xml->createElement('SundayHolidayDelivery', htmlentities($this->getSundayHolidayDelivery())));
+        if ($this->getSundayHolidayDelivery() != null) {
+            $rateReqEl->appendChild($xml->createElement('SundayHolidayDelivery', $this->getSundayHolidayDelivery()));
+        }
 
-        if ($this->getShipDate() != null)
-            $rateReqEl->appendChild($xml->createElement('ShipDate', htmlentities($this->getShipDate())));
+        if ($this->getShipDate() != null) {
+            $rateReqEl->appendChild($xml->createElement('ShipDate', $this->getShipDate()));
+        }
 
-        if ($this->getShipTime() != null)
-            $rateReqEl->appendChild($xml->createElement('ShipTime', htmlentities($this->getShipTime())));
+        if ($this->getShipTime() != null) {
+            $rateReqEl->appendChild($xml->createElement('ShipTime', $this->getShipTime()));
+        }
 
-        if ($this->getDateAdvance() != null)
-            $rateReqEl->appendChild($xml->createElement('DateAdvance', htmlentities($this->getDateAdvance())));
+        if ($this->getDateAdvance() != null) {
+            $rateReqEl->appendChild($xml->createElement('DateAdvance', $this->getDateAdvance()));
+        }
 
-        if ($this->isDeliveryTimeDays() != null)
-            $rateReqEl->appendChild($xml->createElement('DeliveryTimeDays', htmlentities($this->isDeliveryTimeDays())));
+        if ($this->isDeliveryTimeDays() != null) {
+            $rateReqEl->appendChild($xml->createElement('DeliveryTimeDays', $this->isDeliveryTimeDays()));
+        }
 
-        if ($this->isEstimatedDeliveryDate() != null)
-            $rateReqEl->appendChild($xml->createElement('EstimatedDeliveryDate', htmlentities($this->isEstimatedDeliveryDate())));
+        if ($this->isEstimatedDeliveryDate() != null) {
+            $rateReqEl->appendChild($xml->createElement('EstimatedDeliveryDate', $this->isEstimatedDeliveryDate()));
+        }
 
-        if ($this->isAutomationRate() != null)
-            $rateReqEl->appendChild($xml->createElement('AutomationRate', htmlentities($this->isAutomationRate())));
+        if ($this->isAutomationRate() != null) {
+            $rateReqEl->appendChild($xml->createElement('AutomationRate', $this->isAutomationRate()));
+        }
 
-        if ($this->isMachinable() != null)
-            $rateReqEl->appendChild($xml->createElement('Machinable', htmlentities($this->isMachinable())));
+        if ($this->isMachinable() != null) {
+            $rateReqEl->appendChild($xml->createElement('Machinable', $this->isMachinable()));
+        }
 
-        if ($this->getPackageTypeIndicator() != null)
-            $rateReqEl->appendChild($xml->createElement('PackageTypeIndicator', htmlentities($this->getPackageTypeIndicator())));
+        if ($this->getPackageTypeIndicator() != null) {
+            $rateReqEl->appendChild($xml->createElement('PackageTypeIndicator', $this->getPackageTypeIndicator()));
+        }
 
-        if ($this->getMailpieceDimensions() != null)
-            $rateReqEl->appendChild($xml->loadXML($this->getMailpieceDimensions()->toXml()));
+        if ($this->getMailpieceDimensions() != null) {
+            $rateReqEl->appendChild($this->getMailpieceDimensions()->toDOMElement($xml));
+        }
 
-        if ($this->getResponseOptions() != null)
-            $rateReqEl->appendChild($xml->loadXML($this->getResponseOptions()->toXml()));
+        if ($this->getResponseOptions() != null) {
+            $rateReqEl->appendChild($this->getResponseOptions()->toDOMElement($xml));
+        }
 
-        return $xml->saveXML();
+        return $xml;
     }
 }

@@ -9,7 +9,7 @@
  */
 namespace RWC\Endicia;
 
-use RWC\Endicia\InvalidArgumentException;
+use DOMDocument;
 
 /**
  * Base class for Endicia API requests.
@@ -27,7 +27,7 @@ use RWC\Endicia\InvalidArgumentException;
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
-abstract class AbstractRequest
+abstract class AbstractRequest implements IXMLRequest
 {
     /**
      * The requester id (partner id) of the entity making the request.
@@ -57,7 +57,7 @@ abstract class AbstractRequest
      *
      * @param string $requesterId The requester id (partner id);
      *
-     * @throws  InvalidArgumentException If the requester id is invalid.
+     * @param CertifiedIntermediary $certifiedIntermediary API Authorization object.
      */
     public function __construct(string $requesterId, CertifiedIntermediary $certifiedIntermediary)
     {
@@ -69,8 +69,6 @@ abstract class AbstractRequest
      * Sets the CertifiedIntermediary used to authenticate the request.
      *
      * @param CertifiedIntermediary $certifiedIntermediary The CertifiedIntermediary.
-     *
-     * @throws InvalidArgumentException if a null value is set.
      */
     public function setCertifiedIntermediary(CertifiedIntermediary $certifiedIntermediary) : void
     {
@@ -121,8 +119,6 @@ abstract class AbstractRequest
      * is thrown.
      *
      * @param string $requesterId The requester id.
-     *
-     * @throws InvalidArgumentException if the requester id if invalid.
      */
     public function setRequesterId(string $requesterId) : void
     {
@@ -147,30 +143,10 @@ abstract class AbstractRequest
      *
      * @return string Returns the request XML common to all Endicia requests.
      */
-    public function toXml() : string
-    {
-        $xml = new \DOMDocument();
+    public abstract function toXml() : string;
 
-        $requesterIdEl = $xml->createElement('RequesterID', htmlentities($this->getRequesterId()));
-        $xml->appendChild($requesterIdEl);
-
-        $requestIdEl = $xml->createElement('RequestID', htmlentities($this->getRequestId()));
-        $xml->appendChild($requestIdEl);
-
-        $ciEl = $xml->importNode(\DOMDocument::loadXML($this->getCertifiedIntermediary()->toXml()));
-        $xml->appendChild($ciEl);
-
-//        $xml = sprintf(
-//            '<RequesterID>%s</RequesterID>',
-//            htmlentities($this->getRequesterId())
-//        );
-//        $xml .= sprintf(
-//            '<RequestID>%s</RequestID>',
-//            htmlentities($this->getRequestId())
-//        );
-//
-//        $xml .= $this->getCertifiedIntermediary()->toXml();
-
-        return $xml->saveXML();
-    }
+    /**
+     * @return DOMDocument
+     */
+    public abstract function toDOMDocument() : DOMDocument;
 }

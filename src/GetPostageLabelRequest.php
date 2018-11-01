@@ -10,6 +10,7 @@
 
 namespace RWC\Endicia;
 
+use DOMDocument;
 use RWC\Endicia\AbstractRequest;
 use RWC\Endicia\Address;
 use RWC\Endicia\InvalidArgumentException;
@@ -487,90 +488,99 @@ class GetPostageLabelRequest extends AbstractRequest
 	 */
 	public function toXml() : string
 	{
-		//	Note <AccountID> and <PassPhrase> are not enclosed in a
-		//	<CertifiedIntermediary> node, as the other requests are.
-		//	Enclosing credentials in a node was added later to other
-		//	methods in the Label Server API and not backported.
-		$ci = $this->getCertifiedIntermediary();
-		$destinationAddress = $this->getDestinationAddress();
-		$returnAddress = $this->getReturnAddress();
-		
-		$xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+        return $this->toDOMDocument()->saveXML();
+	}
+
+    /**
+     * @return DOMDocument
+     */
+    public function toDOMDocument(): DOMDocument
+    {
+        // TODO Turn this into DOMDocument code.
+        //	Note <AccountID> and <PassPhrase> are not enclosed in a
+        //	<CertifiedIntermediary> node, as the other requests are.
+        //	Enclosing credentials in a node was added later to other
+        //	methods in the Label Server API and not backported.
+        $ci = $this->getCertifiedIntermediary();
+        $destinationAddress = $this->getDestinationAddress();
+        $returnAddress = $this->getReturnAddress();
+
+        $xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
 //		<LabelRequest Test="YES|NO" LabelType="enum string" LabelSize="enum string" ImageFormat="enum string">';
-		$xml .= '<LabelRequest';
-		if($this->isTest()) {
-			$xml .= ' Test="YES"';
-		}
-		if($this->getUseCertifiedMailMail()) {
-			$xml .= ' LabelType="CertifiedMail"';
-		}
-		if($this->getUseDestinationConfirmMail()) {
-			$xml .= ' LabelType="DestinationConfirm"';
-		}
-		if(!$this->isLabelSizeDefault()) {
-			$xml .= ' LabelSize="' . $this->getLabelSize() . '"';
-		}
-		if(!$this->isImageFormatDefault()) {
-			$xml .= ' ImageFormat="' . $this->getImageFormat() . '"';
-		}
-		$xml .= '>';
-		$xml .= '<RequesterID>' . htmlentities($this->getRequesterId()) . '</RequesterID>';
-		if(!empty($ci->getToken())) {	// Use Token
-			$xml .= '<Token>' . htmlspecialchars($ci->getToken()) . '</Token>';
-		} else {	// Use credential set.
-			$xml .= '<AccountID>' . htmlspecialchars($ci->getAccountId()) . '</AccountID>';
-			$xml .= '<PassPhrase>' . htmlspecialchars($ci->getPassPhrase()) . '</PassPhrase>';
-		}
-		$xml .= '<MailClass>' . $this->mailClass . '</MailClass>';	// no need to escape as actually enumerated value
+        $xml .= '<LabelRequest';
+        if($this->isTest()) {
+            $xml .= ' Test="YES"';
+        }
+        if($this->getUseCertifiedMailMail()) {
+            $xml .= ' LabelType="CertifiedMail"';
+        }
+        if($this->getUseDestinationConfirmMail()) {
+            $xml .= ' LabelType="DestinationConfirm"';
+        }
+        if(!$this->isLabelSizeDefault()) {
+            $xml .= ' LabelSize="' . $this->getLabelSize() . '"';
+        }
+        if(!$this->isImageFormatDefault()) {
+            $xml .= ' ImageFormat="' . $this->getImageFormat() . '"';
+        }
+        $xml .= '>';
+        $xml .= '<RequesterID>' . htmlentities($this->getRequesterId()) . '</RequesterID>';
+        if(!empty($ci->getToken())) {	// Use Token
+            $xml .= '<Token>' . htmlspecialchars($ci->getToken()) . '</Token>';
+        } else {	// Use credential set.
+            $xml .= '<AccountID>' . htmlspecialchars($ci->getAccountId()) . '</AccountID>';
+            $xml .= '<PassPhrase>' . htmlspecialchars($ci->getPassPhrase()) . '</PassPhrase>';
+        }
+        $xml .= '<MailClass>' . $this->mailClass . '</MailClass>';	// no need to escape as actually enumerated value
 //		$xml .= '<DateAdvance>int</DateAdvance>';
-		$xml .= sprintf('<WeightOz>%.2f</WeightOz>', $this->getWeight());
+        $xml .= sprintf('<WeightOz>%.2f</WeightOz>', $this->getWeight());
 //		$xml .= '<MailpieceShape>string</MailpieceShape>';
 //		$xml .= '<Stealth>string</Stealth>';
 //		$xml .= '<Services InsuredMail="string" SignatureConfirmation="string" />';
 //		$xml .= '<Value>double</Value>';
-		$xml .= '<PartnerCustomerID>UNUSED</PartnerCustomerID>';
-		$xml .= '<PartnerTransactionID>' . htmlentities($this->getRequestId()) . '</PartnerTransactionID>';
-		if($destinationAddress->getName()) {
-			$xml .= '<ToName>' . $destinationAddress->getName() . '</ToName>';
-		}
-		if($destinationAddress->getCompany()) {
-			$xml .= '<ToCompany>' . $destinationAddress->getCompany() . '</ToCompany>';
-		}
-		$xml .= '<ToAddress1>' . $destinationAddress->getAddressLine1() . '</ToAddress1>';
-		if($destinationAddress->getAddressLine2()) {
-			$xml .= '<ToAddress2>' . $destinationAddress->getAddressLine2() . '</ToAddress2>';
-		}
-		if('US' != $destinationAddress->getCountry()) {
-			//	we are not to use Address Line 3 or 4 with "domestic" labels 
-			if($destinationAddress->getAddressLine3()) {
-				$xml .= '<ToAddress3>' . $destinationAddress->getAddressLine3() . '</ToAddress3>';
-			}
-			if($destinationAddress->getAddressLine4()) {
-				$xml .= '<ToAddress4>' . $destinationAddress->getAddressLine4() . '</ToAddress4>';
-			}
-		}
-		$xml .= '<ToCity>' . $destinationAddress->getCity() . '</ToCity>';
-		$xml .= '<ToState>' . $destinationAddress->getState() . '</ToState>';
-		$xml .= '<ToPostalCode>' . $destinationAddress->getPostalCode() . '</ToPostalCode>';
-		if($destinationAddress->getDeliveryPoint()) {
-			$xml .= '<ToDeliveryPoint>' . $destinationAddress->getDeliveryPoint() . '</ToDeliveryPoint>';
-		}
-		if($destinationAddress->getPhone()) {
-			$xml .= '<ToPhone>' . $destinationAddress->getPhone() . '</ToPhone>';
-		}
-		if($destinationAddress->getEmail()) {
-			$xml .= '<ToEMail>' . $destinationAddress->getEmail() . '</ToEMail>';
-		}
-		if($returnAddress->getCompany()) {
-			$xml .= '<FromCompany>' . $returnAddress->getCompany() . '</FromCompany>';
-		}
-		if($returnAddress->getName()) {
-			$xml .= '<FromName>' . $returnAddress->getName() . '</FromName>';
-		}
-		$xml .= '<ReturnAddress1>' . $returnAddress->getAddressLine1() . '</ReturnAddress1>';
-		if($returnAddress->getAddressLine2()) {
-			$xml .= '<ReturnAddress2>' . $returnAddress->getAddressLine2() . '</ReturnAddress2>';
-		}
+        $xml .= '<PartnerCustomerID>UNUSED</PartnerCustomerID>';
+        $xml .= '<PartnerTransactionID>' . htmlentities($this->getRequestId()) . '</PartnerTransactionID>';
+        if($destinationAddress->getName()) {
+            $xml .= '<ToName>' . $destinationAddress->getName() . '</ToName>';
+        }
+        if($destinationAddress->getCompany()) {
+            $xml .= '<ToCompany>' . $destinationAddress->getCompany() . '</ToCompany>';
+        }
+        $xml .= '<ToAddress1>' . $destinationAddress->getAddressLine1() . '</ToAddress1>';
+        if($destinationAddress->getAddressLine2()) {
+            $xml .= '<ToAddress2>' . $destinationAddress->getAddressLine2() . '</ToAddress2>';
+        }
+        if('US' != $destinationAddress->getCountry()) {
+            //	we are not to use Address Line 3 or 4 with "domestic" labels
+            if($destinationAddress->getAddressLine3()) {
+                $xml .= '<ToAddress3>' . $destinationAddress->getAddressLine3() . '</ToAddress3>';
+            }
+            if($destinationAddress->getAddressLine4()) {
+                $xml .= '<ToAddress4>' . $destinationAddress->getAddressLine4() . '</ToAddress4>';
+            }
+        }
+        $xml .= '<ToCity>' . $destinationAddress->getCity() . '</ToCity>';
+        $xml .= '<ToState>' . $destinationAddress->getState() . '</ToState>';
+        $xml .= '<ToPostalCode>' . $destinationAddress->getPostalCode() . '</ToPostalCode>';
+        if($destinationAddress->getDeliveryPoint()) {
+            $xml .= '<ToDeliveryPoint>' . $destinationAddress->getDeliveryPoint() . '</ToDeliveryPoint>';
+        }
+        if($destinationAddress->getPhone()) {
+            $xml .= '<ToPhone>' . $destinationAddress->getPhone() . '</ToPhone>';
+        }
+        if($destinationAddress->getEmail()) {
+            $xml .= '<ToEMail>' . $destinationAddress->getEmail() . '</ToEMail>';
+        }
+        if($returnAddress->getCompany()) {
+            $xml .= '<FromCompany>' . $returnAddress->getCompany() . '</FromCompany>';
+        }
+        if($returnAddress->getName()) {
+            $xml .= '<FromName>' . $returnAddress->getName() . '</FromName>';
+        }
+        $xml .= '<ReturnAddress1>' . $returnAddress->getAddressLine1() . '</ReturnAddress1>';
+        if($returnAddress->getAddressLine2()) {
+            $xml .= '<ReturnAddress2>' . $returnAddress->getAddressLine2() . '</ReturnAddress2>';
+        }
 //		we are not to use Address Line 3 or 4 with "domestic" labels or internalional labels when a label subtype is supplied???
 //		if('US' != $returnAddress->getCountry()) {
 //			if($returnAddress->getAddressLine3()) {
@@ -580,18 +590,20 @@ class GetPostageLabelRequest extends AbstractRequest
 //				$xml .= '<ReturnAddress4>' . $returnAddress->getAddressLine4() . '</ReturnAddress4>';
 //			}
 //		}
-		$xml .= '<FromCity>' . $returnAddress->getCity() . '</FromCity>';
-		$xml .= '<FromState>' . $returnAddress->getState() . '</FromState>';
-		$xml .= '<FromPostalCode>' . $returnAddress->getPostalCode() . '</FromPostalCode>';
-		if($returnAddress->getPhone()) {
-			$xml .= '<FromPhone>' . $returnAddress->getPhone() . '</FromPhone>';
-		}
-		if($returnAddress->getEmail()) {
-			$xml .= '<FromEMail>' . $returnAddress->getEmail() . '</FromEMail>';
-		}
+        $xml .= '<FromCity>' . $returnAddress->getCity() . '</FromCity>';
+        $xml .= '<FromState>' . $returnAddress->getState() . '</FromState>';
+        $xml .= '<FromPostalCode>' . $returnAddress->getPostalCode() . '</FromPostalCode>';
+        if($returnAddress->getPhone()) {
+            $xml .= '<FromPhone>' . $returnAddress->getPhone() . '</FromPhone>';
+        }
+        if($returnAddress->getEmail()) {
+            $xml .= '<FromEMail>' . $returnAddress->getEmail() . '</FromEMail>';
+        }
 //		$xml .= '<ResponseOptions PostagePrice="string"/>';
-		$xml .= '</LabelRequest>';
-		
-		return $xml;
-	}
+        $xml .= '</LabelRequest>';
+
+        $document = new DOMDocument();
+        $document->loadXML($xml);
+        return $document;
+    }
 }
