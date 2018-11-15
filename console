@@ -8,4 +8,5 @@ use Symfony\Component\Console\Application;
 
 $app = new Application();
 $app->add(new RWC\Endicia\Commands\ChangePassPhraseCommand());
+$app->add(new RWC\Endicia\Commands\ResetSuspendedAccountCommand());
 $app->run();

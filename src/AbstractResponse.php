@@ -168,12 +168,13 @@ abstract class AbstractResponse
      */
     public function setErrorMessage(string $errorMessage) : void
     {
+        /*
         if (strlen($errorMessage) > 150) {
             throw new InvalidArgumentException(
                 "Error message must be 150 or fewer characters."
             );
         }
-
+*/
         $this->errorMessage = $errorMessage;
     }
 
@@ -231,7 +232,7 @@ abstract class AbstractResponse
             if ($requesterId->length > 0) {
                 $response->setRequesterId($requesterId[0]->nodeValue);
             }
-            
+
             $response->setStatus($status[0]->nodeValue);
 
             if ($requestId->length > 0) {

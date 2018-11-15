@@ -124,6 +124,29 @@ class Client
     }
 
     /**
+     * @param ResetSuspendedAccountRequest $request
+     * @return ResetSuspendedAccountResponse
+     * @throws \RWC\Endicia\InvalidArgumentException
+     */
+    public function resetSuspendedAccount(ResetSuspendedAccountRequest $request) : ResetSuspendedAccountResponse
+    {
+        $this->applySandboxOptions($request);
+        $response = $this->getClient()->post(
+            $this->getBaseUrl() . '/ResetSuspendedAccountXML?op=resetSuspendedAccountXML',
+            [
+                'form_params' => [
+                    'resetSuspendedAccountRequestXML'=> $request->toXml()
+                ]
+            ]
+        );
+
+        if ($response->getReasonPhrase() != 'OK') {
+            // TODO WTF?
+        }
+
+        return ResetSuspendedAccountResponse::fromXml((string) $response->getBody());
+    }
+    /**
      * Requests a postage rate given a set of parameters
      *
      * @param PostageRateRequest $request The request object

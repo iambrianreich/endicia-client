@@ -100,7 +100,7 @@ abstract class AbstractRequest implements IXMLRequest
     public function getRequestId() : string
     {
         if ($this->requestId == null) {
-            $this->requestId = uniqid();
+            $this->requestId = RequestIdGenerator::generateRequestId();
         }
 
         return $this->requestId;
