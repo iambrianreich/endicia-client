@@ -13,7 +13,7 @@ use RWC\Endicia\AbstractRequest;
  * must be 64 or fewer characters in length. If these conditions are not met,
  * an InvalidArgumentException is thrown.
  */
-class ChangePassphraseRequest extends AbstractRequest
+class ChangePassphraseRequest extends AbstractRequest implements IXMLRequest
 {
     /**
      * The new passphrase to set for the account.

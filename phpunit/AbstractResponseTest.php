@@ -108,26 +108,6 @@ class AbstractResponseTest extends TestCase
         $this->assertEquals($requestId, $response->getRequestId());
     }
 
-    public function testFromXmlThrowsExceptionWhenErrorMessageTooLong()
-    {
-        $requesterId    = '4444';
-        $status         = '432432';
-        $errorMessage   = 'Very bad things here';
-        $requestId = '432423432';
-
-        $xml            =
-            '<?xml version="1.0" encoding="utf-8"?>' .
-            '<ChangePassPhraseRequestResponse xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="www.envmgr.com/LabelService">' .
-            '<RequesterID>' . htmlentities($requesterId) . '</RequesterID>' .
-            '<RequestID>' . htmlentities($requestId) . '</RequestID>' .
-            '<Status>' . $status . '</Status>' .
-            '<ErrorMessage>' . str_repeat('A', 151) . '</ErrorMessage>' .
-            '</ChangePassPhraseRequestResponse>';
-
-        $this->expectException('RWC\Endicia\InvalidArgumentException');
-        $response = AbstractResponse::fromXml($xml, $this->getResponse());
-    }
-
     public function testFromXmlThrowsExceptionWhenRequesterIDEmpty()
     {
         $requesterId    = '';

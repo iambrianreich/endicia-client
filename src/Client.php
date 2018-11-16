@@ -111,7 +111,7 @@ class Client
             $this->getBaseUrl() . '/ChangePassPhraseXML?op=ChangePassPhraseXML',
             [
                 'form_params' => [
-                    'changePassPhraseRequestXML'=> $request->toXml()
+                    'changePassPhraseRequestXML' => $request->toXml()
                 ]
             ]
         );
@@ -158,8 +158,10 @@ class Client
      */
     public function postageRateRequest(PostageRateRequest $request)
     {
+        $this->applySandboxOptions($request);
+
         $response = $this->getClient()->post(
-            $this->getBaseUrl() . '/PostageRateXML?op=PostageRateXML',
+            $this->getBaseUrl() . '/CalculatePostageRateXML?op=CalculatePostageRateXML',
             [
                 'form_params' => [
                     'postageRateRequestXML' => $request->toXml()
@@ -173,16 +175,19 @@ class Client
     /**
      * Adds funds to a postage account.
      *
-     * @param  RecreditRequest $request The request object.
+     * @param RecreditRequest $request The request object.
      *
      * @return RecreditRequestResponse Returns the API response.
+     *
+     * @throws \RWC\Endicia\EndiciaException
+     * @throws \RWC\Endicia\InvalidArgumentException
      */
     public function recredit(RecreditRequest $request)
     {
         $this->applySandboxOptions($request);
 
         $response = $this->getClient()->post(
-            $this->getBaseUrl() . '/GetPostageLabelXML',
+            $this->getBaseUrl() . '/BuyPostageXML',
             [
                 'form_params' => [
                     'recreditRequestXML'=> $request->toXml()
@@ -203,6 +208,9 @@ class Client
      * @param  GetPostageLabelRequest $request The request object.
      *
      * @return GetPostageLabelRequestResponse Returns the API response.
+     *
+     * @throws \RWC\Endicia\EndiciaException
+     * @throws \RWC\Endicia\InvalidArgumentException
      */
     public function getPostageLabel(GetPostageLabelRequest $request)
     {

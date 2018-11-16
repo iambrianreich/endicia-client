@@ -116,9 +116,9 @@ final class LabelSize
 	 *	A check to determine if a given string corresponds to one of the public
 	 *	constants
 	 *
-	 *	@param size - the string to test
+	 *	@param string size the string to test
 	 *
-	 *	@return a boolean true if and only if the string corresponds to one of
+	 *	@return boolean true if and only if the string corresponds to one of
 	 *		public constants
 	 */
 	public static function is_valid(string $size) : bool
@@ -130,9 +130,9 @@ final class LabelSize
 	 *	A check to determine if a given string corresponds to one of the public
 	 *	constants valid for certified mail
 	 *
-	 *	@param size - the string to test
+	 *	@param string size the string to test
 	 *
-	 *	@return a boolean true if and only if the string corresponds to one of
+	 *	@return boolean true if and only if the string corresponds to one of
 	 *		public constants
 	 */
 	public static function is_valid_certified_mail_label_size(string $size) : bool
@@ -144,9 +144,9 @@ final class LabelSize
 	 *	A check to determine if a given string corresponds to one of the public
 	 *	constants valid if destination confirm has been requested
 	 *
-	 *	@param size - the string to test
+	 *	@param string size the string to test
 	 *
-	 *	@return a boolean true if and only if the string corresponds to one of
+	 *	@return boolean true if and only if the string corresponds to one of
 	 *		public constants
 	 */
 	public static function is_valid_destination_confirm_label_size(string $size) : bool

@@ -97,7 +97,7 @@ class CertifiedIntermediary
     /**
      * Returns the Account ID for the Endicia postage account.
      *
-     * @return [type] [description]
+     * @return string Returns the Account ID for the Endicia account.
      */
     public function getAccountId() : string
     {
@@ -144,11 +144,11 @@ class CertifiedIntermediary
      * Sets the remaining postage balance after re-credit in dollars and cents
      * (mils).
      *
-     * @param float $postageBalanace The remaining postage balanace.
+     * @param float $postageBalance The remaining postage balance.
      */
-    public function setPostageBalance(float $postageBalanace) : void
+    public function setPostageBalance(float $postageBalance) : void
     {
-        $this->postageBalanace = $postageBalanace;
+        $this->postageBalance = $postageBalance;
     }
 
     /**
@@ -159,7 +159,7 @@ class CertifiedIntermediary
      */
     public function getPostageBalance() : float
     {
-        return $this->postageBalanace;
+        return $this->postageBalance;
     }
 
     /**
@@ -193,7 +193,7 @@ class CertifiedIntermediary
      */
     public function setAccountStatus(string $accountStatus) : void
     {
-        if ($accountStatus != 'A') {
+        if ($accountStatus != 'A' && $accountStatus != 'A ') {
             throw new InvalidArgumentException('Invalid Account Status: ' .
                 $accountStatus . '. Value must always be "A"');
         }
@@ -204,7 +204,7 @@ class CertifiedIntermediary
     /**
      * Returns the account status flag. Should always be "A" for Active.
      *
-     * @return Returns the acocunt status flag.
+     * @return string Returns the account status flag.
      */
     public function getAccountStatus() : string
     {

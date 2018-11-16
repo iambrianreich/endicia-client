@@ -5,9 +5,9 @@
  *
  * @author     Brian Reich <breich@reich-consulting.net>
  * @copyright  Copyright (C) 2018 Reich Web Consulting
- * @package    Catalyst\Customers
+ * @package    RWC\Endicia
  * @subpackage Commands
- * @license    Private Use
+ * @license    MIT
  * @link       https://www.reich-consulting.net/projects/endicia-client/
  */
 
@@ -48,13 +48,13 @@ use RWC\Endicia\Client as EndiciaClient;
  * API and output the response.
  *
  * @author     Brian Reich <breich@reich-consulting.net>
- * @copyright  2017 Catalyst Fabric Solitions
- * @license    Private Use
+ * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
+ * @license    MIT
  */
 class ResetSuspendedAccountCommand extends Command
 {
     /**
-     * Configures the EnableNexioCommand.
+     * Configures the ResetSuspendedAccountCommand.
      *
      * {@inheritDoc}
      * @see \Symfony\Component\Console\Command\Command::configure()
@@ -192,7 +192,7 @@ class ResetSuspendedAccountCommand extends Command
             $errors[] = 'mode option is required';
         }
 
-        if ($mode != 'testing' && empty($requesterId)) {
+        if ($mode != 'sandbox' && empty($requesterId)) {
             $errors[] = 'A requester id is required in production mode';
         }
 

@@ -92,9 +92,9 @@ final class LabelImageFormat
 	 *	A check to determine if a given string corresponds to one of the public
 	 *	constants
 	 *
-	 *	@param format - the string to test
+	 *	@param string format - the string to test
 	 *
-	 *	@return a boolean true if and only if the string corresponds to one of
+	 *	@return boolean true if and only if the string corresponds to one of
 	 *		public constants
 	 */
 	public static function is_valid(string $format) : bool

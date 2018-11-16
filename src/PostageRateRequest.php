@@ -3,7 +3,7 @@
 /**
  * This file contains the RWC\Endicia\PostageRateRequest class.
  *
- * @author     Joshua Stroup <jstroup@stroupcreative.group>
+ * @author     Joshua Stroup <josh.stroup@reich-consulting.net>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
@@ -245,9 +245,15 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
      * PriorityMailInternational
      *
      * @param string $mailClass The mail class to set for the mail piece
+     *
+     * @throws \RWC\Endicia\InvalidArgumentException
      */
     public function setMailClass(string $mailClass) : void
     {
+        if (!MailClass::is_valid($mailClass)) {
+            throw new InvalidArgumentException('Mail Class must be one of the constants from : RWC\Endicia\MailClass');
+        }
+
         $this->mailClass = $mailClass;
     }
 
@@ -330,12 +336,18 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
 
     /**
      * Sets the mailpiece shape to one of the predefined options
-     * Options as of Label Server v8.8 are in Constants::MAILSHAPE_*
+     * Options as of Label Server v8.8 are in MailShape::*
      *
      * @param string $mailpieceShape The preset mail piece shape to use for the request
+     *
+     * @throws \RWC\Endicia\InvalidArgumentException
      */
     public function setMailpieceShape(?string $mailpieceShape) : void
     {
+        if (!MailShape::is_valid($mailpieceShape) && $mailpieceShape != null) {
+            throw new InvalidArgumentException('Mail Class must be one of the constants from : RWC\Endicia\MailShape');
+        }
+
         $this->mailpieceShape = $mailpieceShape;
     }
 
@@ -490,9 +502,9 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
     /**
      * Returns the postal code to send the mail piece from
      *
-     * @return int Returns the postal code to send the mail piece from
+     * @return string Returns the postal code to send the mail piece from
      */
-    public function getFromPostalCode() : int
+    public function getFromPostalCode() : string
     {
         return $this->fromPostalCode;
     }
@@ -500,9 +512,9 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
     /**
      * Sets the postal code to send the mail piece from
      *
-     * @param int $fromPostalCode The postal code to send the mail piece from
+     * @param string $fromPostalCode The postal code to send the mail piece from
      */
-    public function setFromPostalCode(int $fromPostalCode) : void
+    public function setFromPostalCode(string $fromPostalCode) : void
     {
         $this->fromPostalCode = $fromPostalCode;
     }
@@ -530,9 +542,9 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
     /**
      * Returns the postal code to send the mail piece to
      *
-     * @return int Returns the postal code to send the mail piece to
+     * @return string Returns the postal code to send the mail piece to
      */
-    public function getToPostalCode() : int
+    public function getToPostalCode() : string
     {
         return $this->toPostalCode;
     }
@@ -540,9 +552,9 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
     /**
      * Sets the postal code to send the mail piece to
      *
-     * @param int $toPostalCode The postal code to send the mail piece to
+     * @param string $toPostalCode The postal code to send the mail piece to
      */
-    public function setToPostalCode(int $toPostalCode) : void
+    public function setToPostalCode(string $toPostalCode) : void
     {
         $this->toPostalCode = $toPostalCode;
     }
@@ -709,12 +721,12 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
      */
     public function toDOMDocument(): DOMDocument
     {
-        $xml = new DOMDocument();
+        $xml = new DOMDocument('1.0', 'utf-8');
         $rateReqEl = $xml->createElement('PostageRateRequest');
 
-        $xml->appendChild($xml->createElement('RequesterID', $this->getRequesterId()));
-        $xml->appendChild($xml->createElement('RequestID', $this->getRequestId()));
-        $xml->appendChild($this->getCertifiedIntermediary()->toDOMElement($xml));
+        $rateReqEl->appendChild($xml->createElement('RequesterID', $this->getRequesterId()));
+        $rateReqEl->appendChild($xml->createElement('RequestID', $this->getRequestId()));
+        $rateReqEl->appendChild($this->getCertifiedIntermediary()->toDOMElement($xml));
 
         $rateReqEl->appendChild($xml->createElement('MailClass', $this->getMailClass()));
         $rateReqEl->appendChild($xml->createElement('WeightOz', $this->getWeight()));
@@ -770,20 +782,20 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
             $rateReqEl->appendChild($xml->createElement('DateAdvance', $this->getDateAdvance()));
         }
 
-        if ($this->isDeliveryTimeDays() != null) {
-            $rateReqEl->appendChild($xml->createElement('DeliveryTimeDays', $this->isDeliveryTimeDays()));
+        if ($this->isEstimatedDeliveryDate() != null) {
+            $rateReqEl->appendChild($xml->createElement('EstimatedDeliveryDate', ($this->isEstimatedDeliveryDate()) ? 'TRUE' : 'FALSE'));
         }
 
-        if ($this->isEstimatedDeliveryDate() != null) {
-            $rateReqEl->appendChild($xml->createElement('EstimatedDeliveryDate', $this->isEstimatedDeliveryDate()));
+        if ($this->isDeliveryTimeDays() != null) {
+            $rateReqEl->appendChild($xml->createElement('DeliveryTimeDays', ($this->isDeliveryTimeDays()) ? 'TRUE' : 'FALSE'));
         }
 
         if ($this->isAutomationRate() != null) {
-            $rateReqEl->appendChild($xml->createElement('AutomationRate', $this->isAutomationRate()));
+            $rateReqEl->appendChild($xml->createElement('AutomationRate', ($this->isAutomationRate()) ? 'TRUE' : 'FALSE'));
         }
 
         if ($this->isMachinable() != null) {
-            $rateReqEl->appendChild($xml->createElement('Machinable', $this->isMachinable()));
+            $rateReqEl->appendChild($xml->createElement('Machinable', ($this->isMachinable()) ? 'TRUE' : 'FALSE'));
         }
 
         if ($this->getPackageTypeIndicator() != null) {
@@ -797,6 +809,9 @@ class PostageRateRequest extends AbstractRequest implements IXMLRequest
         if ($this->getResponseOptions() != null) {
             $rateReqEl->appendChild($this->getResponseOptions()->toDOMElement($xml));
         }
+
+        // Append PostageRateRequest Node to document
+        $xml->appendChild($rateReqEl);
 
         return $xml;
     }

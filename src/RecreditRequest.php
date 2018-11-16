@@ -30,7 +30,7 @@ use RWC\Endicia\InvalidArgumentException;
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
-class RecreditRequest extends AbstractRequest
+class RecreditRequest extends AbstractRequest implements IXMLRequest
 {
     /**
      * The amount of credit to add to the account.
@@ -127,10 +127,7 @@ class RecreditRequest extends AbstractRequest
         $root->appendChild($document->createElement('RequestID', $this->getRequestId()));
         $root->appendChild($this->getCertifiedIntermediary()->toDOMElement($document));
 
-        $root->appendChild($document->createElement(
-            'RecreditAmount',
-            sprintf('%.2f', $this->getRecreditAmount()))
-        );
+        $root->appendChild($document->createElement('RecreditAmount', round($this->getRecreditAmount(), 2)));
 
         return $document;
     }

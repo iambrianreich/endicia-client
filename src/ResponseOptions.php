@@ -3,7 +3,7 @@
 /**
  * This file contains the RWC\Endicia\ResponseOptions class.
  *
- * @author     Joshua Stroup <jstroup@stroupcreative.group>
+ * @author     Joshua Stroup <josh.stroup@reich-consulting.net>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
@@ -64,7 +64,7 @@ class ResponseOptions implements IRequestElement
     public function toDOMElement(\DOMDocument $document): DOMElement
     {
         $optionsEl = $document->createElement('ResponseOptions');
-        $optionsEl->setAttribute('PostagePrice', (string) $this->isPostagePrice());
+        $optionsEl->setAttribute('PostagePrice', ($this->isPostagePrice()) ? 'TRUE' : 'FALSE');
 
         return $optionsEl;
     }

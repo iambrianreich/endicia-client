@@ -3,7 +3,7 @@
 /**
  * This file contains the RWC\Endicia\PostageRateRequestResponseTest class.
  *
- * @author     Joshua Stroup <jstroup@stroupcreative.group>
+ * @author     Joshua Stroup <josh.stroup@reich-consulting.net>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */

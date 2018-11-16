@@ -4,6 +4,7 @@
 
 use RWC\Endicia\Constants;
 use RWC\Endicia\MailpieceDimensions;
+use RWC\Endicia\MailShape;
 use RWC\Endicia\ResponseOptions;
 use RWC\Endicia\Testing\ApiTestCase;
 use RWC\Endicia\Address;
@@ -62,13 +63,13 @@ class ClientTest extends ApiTestCase
         $request       = new PostageRateRequest(
             $requesterId,
             $ci,
-            Constants::MAILCLASS_PRIORITY,
+            MailClass::PRIORITY,
             32.0,
             12345,
             11215,
             null,
             null,
-            Constants::MAILSHAPE_LARGEFLATRATEBOX,
+            MailShape::LARGEFLATRATEBOX,
             new MailpieceDimensions(12.25, 12.25, 6.0),
             null,
             null,
@@ -132,7 +133,7 @@ class ClientTest extends ApiTestCase
         $client        = new Client(Client::MODE_SANDBOX);
         $requesterId   = $client->getSandboxRequesterId();
         $ci            = $this->getCertifiedIntermediary();
-        $recreditAmount = 500.00;
+        $recreditAmount = 10.00;
 
         $request       = new RecreditRequest(
             $requesterId,
@@ -159,4 +160,186 @@ class ClientTest extends ApiTestCase
 		$image = imagecreatefromstring($response->getPostageLabel());	// returns FALSE if not bitmap image data
 		$this->assertThat($image, $this->logicalNot($this->isFalse()), 'Label data did not represent bitmap image');
 	}
+
+    public function testDomesticToDomesticRateRequests()
+    {
+        $client        = new Client(Client::MODE_SANDBOX);
+        $requesterId   = $client->getSandboxRequesterId();
+        $ci            = $this->getCertifiedIntermediary();
+
+        $request1       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            MailClass::PRIORITY,
+            64.0,
+            '01970',
+            '92673',
+            null,
+            null,
+            MailShape::LARGEPARCEL,
+            null,
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response1 = $client->postageRateRequest($request1);
+        $this->assertTrue($response1->isSuccessful(), $response1->getErrorMessage());
+
+        $request2       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            MailClass::FIRST,
+            8.0,
+            '62444',
+            '92673',
+            null,
+            null,
+            MailShape::PARCEL,
+            new MailpieceDimensions(12.0, 10.0, 3.0),
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response2 = $client->postageRateRequest($request2);
+        $this->assertTrue($response2->isSuccessful(), $response2->getErrorMessage());
+
+        $request3       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            MailClass::PRIORITY,
+            27.4,
+            '92673',
+            '01970',
+            null,
+            null,
+            MailShape::FLATRATEPADDEDENVELOPE,
+            null,
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response3 = $client->postageRateRequest($request3);
+        $this->assertTrue($response3->isSuccessful(), $response3->getErrorMessage());
+    }
+
+    public function testDomesticToInternationalRateRequests()
+    {
+        $client        = new Client(Client::MODE_SANDBOX);
+        $requesterId   = $client->getSandboxRequesterId();
+        $ci            = $this->getCertifiedIntermediary();
+
+        $request1       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            MailClass::PRIORITYMAILINTERNATIONAL,
+            64.0,
+            '01970',
+            '00000',
+            null,
+            'AE',
+            MailShape::MEDIUMFLATRATEBOX,
+            null,
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response1 = $client->postageRateRequest($request1);
+        $this->assertTrue($response1->isSuccessful(), $response1->getErrorMessage());
+
+        $request2       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            MailClass::PRIORITYMAILINTERNATIONAL,
+            8.0,
+            '62444',
+            'M4A 2S6',
+            null,
+            'CA',
+            MailShape::LARGEFLATRATEBOX,
+            new MailpieceDimensions(12.0, 10.0, 3.0),
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response2 = $client->postageRateRequest($request2);
+        $this->assertTrue($response2->isSuccessful(), $response2->getErrorMessage());
+
+        $request3       = new PostageRateRequest(
+            $requesterId,
+            $ci,
+            MailClass::PRIORITYMAILINTERNATIONAL,
+            27.4,
+            '92673',
+            '74321',
+            null,
+            'DE',
+            MailShape::FLATRATEPADDEDENVELOPE,
+            null,
+            null,
+            null,
+            null,
+            false,
+            null,
+            null,
+            null,
+            true,
+            true,
+            null,
+            null,
+            null,
+            new ResponseOptions(true));
+
+        $response3 = $client->postageRateRequest($request3);
+        $this->assertTrue($response3->isSuccessful(), $response3->getErrorMessage());
+    }
 }

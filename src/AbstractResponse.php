@@ -248,7 +248,7 @@ abstract class AbstractResponse
             return $response;
         } catch (\Exception $e) {
             throw new InvalidArgumentException(
-                "Invalid ChangePassPhraseRequestResponse XML. " .
+                "Invalid Response XML. " .
                 $e->getMessage(),
                 null,
                 $e

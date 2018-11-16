@@ -32,7 +32,7 @@ use RWC\Endicia\MailClass;
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
  * @license    MIT
  */
-class GetPostageLabelRequest extends AbstractRequest
+class GetPostageLabelRequest extends AbstractRequest implements IXMLRequest
 {
 
 	/**
