@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file contains the RWC\Endicia\PostageRateRequestResponseTest class.
+ * This file contains the RWC\Endicia\PostageRateRequestResponse class.
  *
  * @author     Joshua Stroup <josh.stroup@reich-consulting.net>
  * @copyright  (C) Copyright 2018 Reich Web Consulting https://www.reich-consulting.net/
