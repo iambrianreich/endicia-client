@@ -1,8 +1,7 @@
 <?php
 
- namespace Tests\RWC\Endicia;
+namespace Tests\RWC\Endicia;
 
-use RWC\Endicia\Constants;
 use RWC\Endicia\MailpieceDimensions;
 use RWC\Endicia\MailShape;
 use RWC\Endicia\ResponseOptions;
@@ -16,6 +15,7 @@ use RWC\Endicia\GetPostageLabelRequest;
 use RWC\Endicia\MailClass;
 use RWC\Endicia\RecreditRequest;
 use RWC\Endicia\PostageRateRequest;
+use RWC\Endicia\PostageRatesRequest;
 
 class ClientTest extends ApiTestCase
 {
@@ -86,6 +86,33 @@ class ClientTest extends ApiTestCase
             new ResponseOptions(true));
 
         $response = $client->postageRateRequest($request);
+        $this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
+    }
+
+    public function testPostageRatesRequestSucceeds()
+    {
+        $client        = new Client(Client::MODE_SANDBOX);
+        $requesterId   = $client->getSandboxRequesterId();
+        $ci            = $this->getCertifiedIntermediary();
+        $request       = new PostageRatesRequest(
+            $requesterId,
+            $ci,
+            MailClass::DOMESTIC,
+            12.0,
+            12345,
+            11215,
+            null,
+            null,
+            MailShape::PARCEL,
+            new MailpieceDimensions(6.0, 6.0, 8.0),
+            null,
+            null,
+            true,
+            true,
+            null
+        );
+
+        $response = $client->postageRatesRequest($request);
         $this->assertTrue($response->isSuccessful(), $response->getErrorMessage());
     }
 

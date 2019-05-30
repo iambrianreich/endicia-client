@@ -69,7 +69,7 @@ final class MailClass
     const FIRSTCLASSMAILINTERNATIONAL = 'FirstClassMailInternational';
 
     /**
-     * Used to select the "FIrst Class Package International" mail class.
+     * Used to select the "First Class Package International" mail class.
      */
     const FIRSTCLASSPACKAGEINTERNATIONAL = 'FirstClassPackageInternational';
 
@@ -78,11 +78,21 @@ final class MailClass
      */
     const PRIORITYMAILINTERNATIONAL = 'PriorityMailInternational';
 
+    /**
+     * Used for PostageRatesRequest to designate a domestic shipment
+     */
+    const DOMESTIC = 'Domestic';
+
+    /**
+     * Used for PostageRatesRequest to designate an international shipment
+     */
+    const INTERNATIONAL = 'International';
+
 	/**
 	 *	An array of the public constants allows us to quickly check if a string
 	 *	corresponds to a constant without reflection gymnastics
 	 */
-	private const ALLOWED_MAIL_CLASSES = array(self::PRIORITYEXPRESS, self::FIRST, self::LIBRARYMAIL, self::MEDIAMAIL, self::PRIORITY, self::PARCELSELECT, self::RETAILGROUND, self::PRIORITYMAILEXPRESSINTERNATIONAL, self::FIRSTCLASSMAILINTERNATIONAL, self::FIRSTCLASSPACKAGEINTERNATIONAL, self::PRIORITYMAILINTERNATIONAL);
+	private const ALLOWED_MAIL_CLASSES = array(self::PRIORITYEXPRESS, self::FIRST, self::LIBRARYMAIL, self::MEDIAMAIL, self::PRIORITY, self::PARCELSELECT, self::RETAILGROUND, self::PRIORITYMAILEXPRESSINTERNATIONAL, self::FIRSTCLASSMAILINTERNATIONAL, self::FIRSTCLASSPACKAGEINTERNATIONAL, self::PRIORITYMAILINTERNATIONAL, self::DOMESTIC, self::INTERNATIONAL);
 	
 	/**
 	 *	A check to determine if a given string corresponds to one of the public

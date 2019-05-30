@@ -151,7 +151,7 @@ class PostageRatesRequest extends AbstractRequest implements IXMLRequest
 
     /**
      * Sets the Mail Class to use for the rate request. As of Label Server v8.8,
-     * it must be one of the following, which are available in 'RWC\Endicia\Constants::MAILCLASS_*':
+     * it must be one of the following, which are available in 'RWC\Endicia\MailClass::*':
      *
      * Domestic
      * International
@@ -162,7 +162,7 @@ class PostageRatesRequest extends AbstractRequest implements IXMLRequest
      */
     public function setMailClass(string $mailClass) : void
     {
-        if ($mailClass != 'Domestic' || $mailClass != 'International') {
+        if (!MailClass::is_valid($mailClass)) {
             throw new InvalidArgumentException('Mail Class must be either Domestic or International');
         }
 
