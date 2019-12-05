@@ -11,8 +11,13 @@
     "authors": [
         {
             "name": "Brian Reich",
-            "email": "breich@reich-consulting.net",
+            "email": "brian.reich@reich-consulting.net",
             "homepage" : "https://www.reich-consulting.net/"
+        },
+        {
+            "name": "Joshua Stroup",
+            "email": "josh.stroup@reich-consulting.net",
+            "homepage": "https://reich-consulting.net"
         }
     ],
     "require": {

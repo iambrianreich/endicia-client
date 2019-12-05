@@ -1,4 +1,5 @@
 #Endicia PHP Client
+
 The Endicia PHP Client is meant to make it easy for developers to integrate
 support for Endicia into their new and existing PHP projects.
 
