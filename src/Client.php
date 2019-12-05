@@ -146,6 +146,7 @@ class Client
 
         return ResetSuspendedAccountResponse::fromXml((string) $response->getBody());
     }
+
     /**
      * Requests a postage rate given a set of parameters
      *
@@ -170,6 +171,32 @@ class Client
         );
 
         return PostageRateRequestResponse::fromXml((string) $response->getBody());
+    }
+
+    /**
+     * Requests a set of postage rates given a set of parameters
+     *
+     * @param PostageRatesRequest $request The request object
+     *
+     * @return AbstractResponse Returns the API response
+     *
+     * @throws \RWC\Endicia\EndiciaException
+     * @throws \RWC\Endicia\InvalidArgumentException
+     */
+    public function postageRatesRequest(PostageRatesRequest $request)
+    {
+        $this->applySandboxOptions($request);
+
+        $response = $this->getClient()->post(
+            $this->getBaseUrl() . '/CalculatePostageRatesXML?op=CalculatePostageRatesXML',
+            [
+                'form_params' => [
+                    'postageRatesRequestXML' => $request->toXml()
+                ]
+            ]
+        );
+
+        return PostageRatesRequestResponse::fromXml((string) $response->getBody());
     }
     
     /**
@@ -272,7 +299,7 @@ class Client
      *
      * @param string $mode The run mode for the Client.
      */
-    public function setMode(string $mode = self::MODE_PRODUCTION) : void
+    public function setMode($mode = self::MODE_PRODUCTION) : void
     {
         if (! $this->isValidMode($mode)) {
             throw new InvalidArgumentException('Invalid run mode ' . $mode);
